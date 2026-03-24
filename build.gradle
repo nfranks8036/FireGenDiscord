@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group = 'net.noahf.firegen.discord'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:6.3.2' // interact with Discord api with Java
+    implementation 'org.reflections:reflections:0.10.2' // used to register commands reflectively
+
+    // lombok used to simplify boiler-plate
+    compileOnly("org.projectlombok:lombok:1.18.44")
+    annotationProcessor("org.projectlombok:lombok:1.18.44")
+}
