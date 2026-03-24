@@ -1,0 +1,2 @@
+# FireGenDiscord
+Discord bot
