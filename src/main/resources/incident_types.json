@@ -1,0 +1,214 @@
+{
+  "types": [
+    {"name": ">>CHOOSE CALL TYPE<<", "tag": "NEW_INCIDENT"},
+    {"name": ">NEW<", "tag": "NEW_INCIDENT"},
+
+    {"name": "DOMESTIC", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "FIGHT", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "ROBBERY", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "BURGLARY", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "LARCENY", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "SHOPLIFTING", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "VANDALISM", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "TRESPASSING", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "JUVENILE PROBLEMS", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "BARRICADED SUSPECT", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "DISTURBANCE", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "EDP", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "OFFICER IN DISTRESS", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "RESPONDER IN DISTRESS", "tag": "POLICE_WITH_WEAPON"},
+
+    {"name": "ACTIVE SHOOTER", "tag": "POLICE"},
+    {"name": "ACTIVE GUNFIGHT", "tag": "POLICE"},
+    {"name": "FELONY TRAFFIC STOP", "tag": "POLICE"},
+    {"name": "DISCHARGED FIREARM", "tag": "POLICE"},
+    {"name": "ARMED SUBJECT", "tag": "POLICE"},
+    {"name": "BOMB THREAT", "tag": "POLICE"},
+    {"name": "EVACUATION", "tag": "POLICE"},
+
+    {"name": "DISABLED VEHICLE", "tag": "POLICE"},
+    {"name": "LOCK OUT", "tag": "POLICE"},
+    {"name": "TRAFFIC HAZARD", "tag": "POLICE"},
+    {"name": "INTOXICATED PERSON", "tag": "POLICE"},
+    {"name": "NOISE COMPLAINT", "tag": "POLICE"},
+    {"name": "DISORDERLY CONDUCT", "tag": "POLICE"},
+    {"name": "LOITERING", "tag": "POLICE"},
+    {"name": "SUSPICIOUS PERSON", "tag": "POLICE"},
+    {"name": "SUSPICIOUS VEHICLE", "tag": "POLICE"},
+    {"name": "SUSPICIOUS ACTIVITY", "tag": "POLICE"},
+    {"name": "WELFARE CHECK", "tag": "POLICE"},
+    {"name": "ANIMAL CRUELTY", "tag": "POLICE"},
+    {"name": "ANIMAL AT LARGE", "tag": "POLICE"},
+    {"name": "LIVESTOCK COMPLAINT", "tag": "POLICE"},
+    {"name": "PARKING COMPLAINT", "tag": "POLICE"},
+    {"name": "911 OPEN LINE", "tag": "POLICE"},
+    {"name": "LOST PROPERTY", "tag": "POLICE"},
+    {"name": "PROPERTY DAMAGE", "tag": "POLICE"},
+    {"name": "RESIDENTIAL BURGLAR ALARM", "tag": "POLICE"},
+    {"name": "COMMERCIAL BURGLAR ALARM", "tag": "POLICE"},
+    {"name": "HARASSMENT / THREATS", "tag": "POLICE"},
+    {"name": "LOST PET", "tag": "POLICE"},
+    {"name": "RECKLESS DRIVING", "tag": "POLICE"},
+    {"name": "MISSING PERSON", "tag": "POLICE"},
+    {"name": "BUILDING UNLOCK", "tag": "POLICE"},
+
+    {"name": "LOOKOUT", "tag": "POLICE"},
+    {"name": "TRAFFIC STOP", "tag": "POLICE"},
+    {"name": "FOLLOW-UP", "tag": "POLICE"},
+    {"name": "INMATE TRANSPORT", "tag": "POLICE"},
+    {"name": "ESCORT FUNERAL", "tag": "POLICE"},
+    {"name": "ESCORT EMERGENCY VEHICLE", "tag": "POLICE"},
+    {"name": "ESCORT CIVILIAN", "tag": "POLICE"},
+    {"name": "SECURITY CHECK", "tag": "POLICE"},
+    {"name": "DORM CHECK", "tag": "POLICE"},
+    {"name": "EXTRA PATROL", "tag": "POLICE"},
+    {"name": "FOOT PATROL", "tag": "POLICE"},
+    {"name": "WARRANT SERVICE", "tag": "POLICE"},
+
+    {"name": "ASSIST CITIZEN", "tag": "POLICE"},
+    {"name": "ASSIST MOTORIST", "tag": "POLICE"},
+    {"name": "ASSIST POLICE AGENCY", "tag": "POLICE"},
+    {"name": "EVENT POLICING", "tag": "POLICE"},
+    {"name": "POLICE SERVICE CALL", "tag": "POLICE"},
+
+    {"name": "STRUCTURE FIRE", "tag": "FIRE_QUALIFIERS"},
+    {"name": "FIRE ALARM", "tag": "FIRE_QUALIFIERS"},
+    {"name": "CARBON ALARM", "tag": "FIRE_QUALIFIERS"},
+    {"name": "GAS LEAK", "tag": "FIRE_QUALIFIERS"},
+
+    {"name": "VEHICLE FIRE", "tag": "FIRE"},
+    {"name": "BRUSH FIRE", "tag": "FIRE"},
+    {"name": "DUMPSTER FIRE", "tag": "FIRE"},
+    {"name": "CHIMNEY FIRE", "tag": "FIRE"},
+    {"name": "ELECTRICAL FIRE", "tag": "FIRE"},
+
+    {"name": "ELECTRICAL HAZARD", "tag": "FIRE"},
+    {"name": "ILLEGAL BURN", "tag": "FIRE"},
+    {"name": "SMOKE INVESTIGATION", "tag": "FIRE"},
+    {"name": "HAZMAT", "tag": "FIRE"},
+    {"name": "ELEVATOR ENTRAPMENT", "tag": "FIRE"},
+    {"name": "CONTROLLED BURN", "tag": "FIRE"},
+
+    {"name": "ASSIST FIRE AGENCY", "tag": "FIRE"},
+    {"name": "FIRE STANDBY", "tag": "FIRE"},
+    {"name": "FIRE SERVICE CALL", "tag": "FIRE"},
+
+    {"name": "ABDOMINAL PAIN", "tag": "EMS"},
+    {"name": "ALLERGIC REACTION", "tag": "EMS"},
+    {"name": "ANIMAL ATTACK", "tag": "EMS"},
+    {"name": "BACK PAIN", "tag": "EMS"},
+    {"name": "BREATHING PROBLEMS", "tag": "EMS"},
+    {"name": "BURNS", "tag": "EMS"},
+    {"name": "INHALATION HAZARD", "tag": "EMS"},
+    {"name": "CARDIAC / RESPIRATORY ARREST", "tag": "EMS"},
+    {"name": "NON-TRAUMATIC CHEST PAIN", "tag": "EMS"},
+    {"name": "CHOKING", "tag": "EMS"},
+    {"name": "SEIZURES", "tag": "EMS"},
+    {"name": "DIABETIC PROBLEMS", "tag": "EMS"},
+    {"name": "DROWNING", "tag": "EMS"},
+    {"name": "ELECTROCUTION", "tag": "EMS"},
+    {"name": "EYE PROBLEMS", "tag": "EMS"},
+    {"name": "FALLS", "tag": "EMS"},
+    {"name": "HEADACHE", "tag": "EMS"},
+    {"name": "HEART PROBLEMS", "tag": "EMS"},
+    {"name": "HEAT EXPOSURE", "tag": "EMS"},
+    {"name": "COLD EXPOSURE", "tag": "EMS"},
+    {"name": "BLEEDING / LACERATIONS", "tag": "EMS"},
+    {"name": "ENTRAPMENT", "tag": "EMS"},
+    {"name": "OVERDOSE / INGESTION", "tag": "EMS"},
+    {"name": "CHILDBIRTH", "tag": "EMS"},
+    {"name": "PSYCHIATRIC / BEHAVIORAL", "tag": "EMS"},
+    {"name": "SICK PERSON", "tag": "EMS"},
+    {"name": "PENETRATING TRAUMA", "tag": "EMS"},
+    {"name": "STROKE", "tag": "EMS"},
+    {"name": "TRAUMATIC INJURY", "tag": "EMS"},
+    {"name": "UNCONSCIOUS / FAINTING", "tag": "EMS"},
+    {"name": "UNKNOWN MEDICAL PROBLEM", "tag": "EMS"},
+    {"name": "AUTOMATED CRASH NOTIFICATION", "tag": "EMS"},
+    {"name": "INTER-FACILITY MEDICAL TRANSPORT", "tag": "EMS"},
+
+    {"name": "ASSIST EMS AGENCY", "tag": "EMS"},
+    {"name": "LIFT ASSIST", "tag": "EMS"},
+    {"name": "EMS STANDBY", "tag": "EMS"},
+    {"name": "EMS SERVICE CALL", "tag": "EMS"},
+
+    {"name": "CHILD LOCKED IN VEHICLE", "tag": "EMS"},
+    {"name": "TECHNICAL RESCUE", "tag": "GENERIC"},
+    {"name": "SEARCH AND RESCUE", "tag": "GENERIC"},
+    {"name": "ADVISORY", "tag": "GENERIC"},
+    {"name": "ASSAULT", "tag": "GENERIC"},
+    {"name": "ASSAULT W/ INJURIES", "tag": "GENERIC"},
+    {"name": "MASS CASUALTY INCIDENT", "tag": "GENERIC"},
+
+    {"name": "MVC", "tag": "MOTOR_VEHICLE_CRASH"},
+    {"name": "HIT & RUN", "tag": "MOTOR_VEHICLE_CRASH"}
+  ],
+
+  "tags": [
+    {
+      "name": "POLICE",
+      "priorities": ["PD 1", "PD 2", "PD 3", "PD HBP"],
+      "qualifiers": null
+    },
+    {
+      "name": "POLICE_WITH_WEAPON",
+      "priorities": ["PD 1", "PD 2", "PD 3", "PD HBP"],
+      "qualifiers": {
+        "required": false,
+        "unique": false,
+        "syntax": "{T} W/ {Q}",
+        "list": ["WEAPON", "INJURIES"]
+      }
+    },
+
+    {
+      "name": "EMS",
+      "priorities": ["EMS 1"],
+      "qualifiers": {
+        "required": true,
+        "unique": true,
+        "syntax": "{T}, {Q} RESPONSE",
+        "list": ["OMEGA", "ALPHA", "BRAVO", "CHARLIE", "DELTA", "ECHO"]
+      }
+    },
+
+    {
+      "name": "FIRE",
+      "priorities": ["FIRE 1", "FIRE 2"],
+      "qualifiers": null
+    },
+    {
+      "name": "FIRE_QUALIFIERS",
+      "priorities": ["FIRE 1", "FIRE 2"],
+      "qualifiers": {
+        "required": true,
+        "unique": true,
+        "syntax": "{Q} {T}",
+        "list": ["RESIDENTIAL", "COMMERCIAL", "OUTSIDE"]
+      }
+    },
+
+    {
+      "name": "MOTOR_VEHICLE_CRASH",
+      "priorities": ["MVC 1"],
+      "qualifiers": {
+        "required": true,
+        "unique": true,
+        "syntax": "{T} W/ {Q}",
+        "list": ["PROPERTY DAMAGE", "INJURIES", "SERIOUS INJURIES"]
+      }
+    },
+
+    {
+      "name": "GENERIC",
+      "priorities": ["1", "2", "3", "4"],
+      "qualifiers": null
+    },
+
+    {
+      "name": "NEW_INCIDENT",
+      "priorities": [],
+      "qualifiers": null
+    }
+  ]
+}

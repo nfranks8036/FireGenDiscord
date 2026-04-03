@@ -1,5 +1,9 @@
 package net.noahf.firegen.discord.command;
 
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -17,50 +21,16 @@ import java.util.Objects;
 
 public abstract class Command {
 
-    private static final String COMMANDS_PACKAGE = "net.noahf.firegen.discord.commands";
-
-    private static final List<Command> commands = new ArrayList<>();
-
-    static void register() {
-        // find command classes and instantiate
-        for (Class<? extends Command> clazz : new Reflections(COMMANDS_PACKAGE).getSubTypesOf(Command.class)) {
-            try {
-                @Nullable Constructor<?> constructor =
-                        Arrays.stream(clazz.getDeclaredConstructors())
-                                .filter(c -> c.getParameterCount() == 0)
-                                .findFirst().orElse(null);
-                if (constructor == null) {
-                    throw new IllegalArgumentException("Expected at least 1 constructor of " + clazz.getCanonicalName() + " to have zero parameters, failed to find any.");
-                }
-
-                Command newInstance = (Command) constructor.newInstance();
-                if (newInstance.flags.requireMaintenance && !Main.maintenance) {
-                    continue;
-                }
-
-                Log.text("Registering command: /" + newInstance.name + " (class: " + clazz.getCanonicalName() + ")");
-                commands.add(newInstance);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException error) {
-                Log.error("An error occurred while registering commands: " + error, error);
-            }
-        }
-
-        // register commands with JDA
-        List<CommandData> allCommandData = new ArrayList<>();
-        for (Command command : commands) {
-            allCommandData.addAll(command.data);
-        }
-        Main.JDA.updateCommands().addCommands(allCommandData).queue();
-    }
 
 
 
 
-    private final String name;
-    private final String description;
-    private final CommandFlags flags;
 
-    private final List<CommandData> data;
+    final String name;
+    final String description;
+    final CommandFlags flags;
+
+    final List<CommandData> data;
 
     public Command(@Nullable String name, @Nullable String description) {
         this(name, description, CommandFlags.none());
@@ -91,5 +61,9 @@ public abstract class Command {
         }
         this.data.add(data);
     }
+
+    public abstract void command(SlashCommandInteractionEvent event);
+
+    public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) { throw new UnsupportedOperationException(); }
 
 }

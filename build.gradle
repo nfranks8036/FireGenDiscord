@@ -1,17 +1,23 @@
 plugins {
-    id 'java'
+    id 'application'
 }
 
 group = 'net.noahf.firegen.discord'
 version = '1.0.0'
+
+application {
+    mainClass = "net.noahf.firegen.discord.Main"
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'net.dv8tion:JDA:6.3.2' // interact with Discord api with Java
+    implementation 'net.dv8tion:JDA:6.4.0' // interact with Discord api with Java
+    implementation 'ch.qos.logback:logback-classic:1.5.16' // required by JDA
     implementation 'org.reflections:reflections:0.10.2' // used to register commands reflectively
+    implementation 'com.google.code.gson:gson:2.13.2' // gson for reading incident types
 
     // lombok used to simplify boiler-plate
     compileOnly("org.projectlombok:lombok:1.18.44")

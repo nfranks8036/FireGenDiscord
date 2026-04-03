@@ -6,7 +6,12 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.managers.Presence;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.noahf.firegen.discord.command.CommandManager;
+import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.utilities.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +19,11 @@ import java.util.List;
 public class Main {
 
     public static String TOKEN = null;
+    public static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
     public static JDA JDA;
+    public static CommandManager commands;
+    public static IncidentManager incidents;
 
     public static boolean maintenance = false;
     public static List<Long> allowedDuringMaintenance = new ArrayList<>(
@@ -30,25 +39,27 @@ public class Main {
             Log.error("Failed to find token from environment: " + exception, exception);
         }
 
-        Log.text("Checking for token...");
+        Log.info("Checking for token...");
         if (TOKEN == null)
             throw new RuntimeException("Cannot find token value (token = null)");
 
         String isMaintenance = getExternalInfo("maintenance");
         if (isMaintenance != null) {
-            Log.text("-".repeat(50));
-            Log.text("Environment variable 'maintenance' set to '" + isMaintenance + "'...");
-            Log.text("-".repeat(50));
+            Log.info("-".repeat(50));
+            Log.info("Environment variable 'maintenance' set to '" + isMaintenance + "'...");
+            Log.info("-".repeat(50));
             Main.maintenance = isMaintenance.equalsIgnoreCase("true");
         }
 
-        Log.text("Building JDA...");
+        Log.info("Building JDA...");
         JDA = JDABuilder.createDefault(TOKEN)
-                .setActivity(Activity.listening("to the radio"))
+                .setActivity(Activity.customStatus("Listening to the radio"))
                 .setStatus(OnlineStatus.ONLINE)
+                .disableCache(
+                        CacheFlag.SCHEDULED_EVENTS, CacheFlag.VOICE_STATE
+                )
                 .setEnabledIntents(
-                        GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES,
-                        GatewayIntent.GUILD_MESSAGE_REACTIONS
+                        GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_EXPRESSIONS
                 )
                 .build()
                 .awaitReady();
@@ -58,6 +69,11 @@ public class Main {
             presence.setStatus(OnlineStatus.DO_NOT_DISTURB);
             presence.setActivity(Activity.customStatus("Down for Maintenance"));
         }
+
+        commands = new CommandManager();
+        incidents = new IncidentManager();
+
+        Log.info("Started in " + (System.currentTimeMillis() - start) + "ms!");
     }
 
     private static String getExternalInfo(String key) {
