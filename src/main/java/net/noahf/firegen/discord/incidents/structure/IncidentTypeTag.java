@@ -1,11 +1,8 @@
-package net.noahf.firegen.discord.incidents;
+package net.noahf.firegen.discord.incidents.structure;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;

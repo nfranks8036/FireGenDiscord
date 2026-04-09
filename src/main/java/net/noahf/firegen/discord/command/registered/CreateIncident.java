@@ -1,8 +1,7 @@
 package net.noahf.firegen.discord.command.registered;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -13,23 +12,13 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.incidents.Incident;
-import net.noahf.firegen.discord.incidents.IncidentLocation;
-import net.noahf.firegen.discord.incidents.IncidentType;
-import net.noahf.firegen.discord.incidents.IncidentTypeTag;
+import net.noahf.firegen.discord.incidents.structure.Incident;
+import net.noahf.firegen.discord.incidents.structure.IncidentLocation;
 
-import javax.swing.text.html.Option;
-import javax.xml.stream.Location;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class CreateIncident extends Command {
 
@@ -76,13 +65,25 @@ public class CreateIncident extends Command {
         }
         incident.setDate(date, time);
 
-        incident.post(event.getChannel().asTextChannel());
+        incident.post();
+
+        incident.addContributor(event.getUser().getName());
+
+        event.reply(incident.formatAdmin()).addComponents(
+                ActionRow.of(
+                        Button.primary("firegen-" + incident.getId() + "-incident-type", "Edit Type"),
+                        Button.primary("firegen-" + incident.getId() + "-date-time", "Edit Date/Time"),
+                        Button.primary("firegen-" + incident.getId() + "-location", "Edit Location"),
+                        Button.primary("firegen-" + incident.getId() + "-agencies", "Edit Agencies"),
+                        Button.primary("firegen-" + incident.getId() + "-narrative", "Edit Narrative")
+                )
+        ).queue();
     }
 
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         if (focused.getName().equalsIgnoreCase("type")) {
-            return Main.incidents.listAllIncidentTypes().keySet().stream().toList();
+            return Main.incidents.listAllIncidentTypesNamed();
         }
         if (focused.getName().equalsIgnoreCase("agencies")) {
             return List.of("test");

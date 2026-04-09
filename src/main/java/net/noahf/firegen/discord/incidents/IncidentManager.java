@@ -5,6 +5,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.Getter;
 import net.noahf.firegen.discord.command.registered.CreateIncident;
+import net.noahf.firegen.discord.incidents.structure.Incident;
+import net.noahf.firegen.discord.incidents.structure.IncidentLocation;
+import net.noahf.firegen.discord.incidents.structure.IncidentType;
+import net.noahf.firegen.discord.incidents.structure.IncidentTypeTag;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +20,7 @@ public class IncidentManager {
 
     private static final String INCIDENT_TYPE_FILE = "incident_types.json";
 
-    private IncidentType newIncidentType;
+    private @Getter IncidentType newIncidentType;
     private @Getter List<IncidentType> incidentTypes;
 
     public IncidentManager() {
@@ -49,12 +53,20 @@ public class IncidentManager {
                 if (tag == null) {
                     throw new IllegalStateException("Expected type '" + name + "' to have an associated 'tag'");
                 }
-                IncidentType type = new IncidentType(name, tag, name);
+                List<IncidentType> types = new ArrayList<>();
                 if (newIncidentType == null && tagStr.equalsIgnoreCase("NEW_INCIDENT")) {
-                    newIncidentType = type;
+                    newIncidentType = new IncidentType(name, tag, 0);
+                    types.add(newIncidentType);
+                } else if (tag.getQualifier() == null) {
+                    types.add(new IncidentType(name, tag, 0));
+                } else {
+                    List<String> stringTags = tag.fromType(name);
+                    for (int i = 0; i < stringTags.size(); i++) {
+                        types.add(new IncidentType(name, tag, i));
+                    }
                 }
 
-                incidentTypes.add(type);
+                incidentTypes.addAll(types);
             }
             if (newIncidentType == null) {
                 throw new IllegalStateException("Expected an incident type to be tagged 'NEW_INCIDENT', found none.");
@@ -64,26 +76,21 @@ public class IncidentManager {
         }
     }
 
-    public Map<String, IncidentType> listAllIncidentTypes() {
-        Map<String, IncidentType> returned = new HashMap<>();
-        for (IncidentType type : incidentTypes) {
-            for (String str : type.getTag().fromType(type.getIncidentType())) {
-                returned.put(str, type);
+    public IncidentType getTypeFromString(String type) {
+        for (IncidentType t : this.incidentTypes) {
+            if (t.getCompleteName().equalsIgnoreCase(type)) {
+                return t;
             }
         }
-        return returned;
+        return null;
     }
 
-    public Incident createIncident() {
-        return new Incident(
-                this,
-                new Random(System.currentTimeMillis()).nextLong(1000000, 9999999),
-                newIncidentType,
-                new ArrayList<>(),
-                new IncidentLocation(" ", IncidentLocation.LocationType.CUSTOM),
-                LocalDateTime.now(),
-                new ArrayList<>()
-        );
+    public List<IncidentType> listAllIncidentTypes() {
+        return this.incidentTypes;
+    }
+
+    public List<String> listAllIncidentTypesNamed() {
+        return this.listAllIncidentTypes().stream().map(IncidentType::getCompleteName).toList();
     }
 
 }
