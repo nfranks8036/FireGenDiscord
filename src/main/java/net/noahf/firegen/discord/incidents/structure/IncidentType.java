@@ -2,13 +2,20 @@ package net.noahf.firegen.discord.incidents.structure;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@AllArgsConstructor
+import java.util.Random;
+
+@RequiredArgsConstructor
 public class IncidentType {
 
-    private @Getter String type;
-    private @Getter IncidentTypeTag tag;
-    private @Getter int qualifierChoice;
+    private @NotNull @Getter String type;
+    private @NotNull @Getter IncidentTypeTag tag;
+    private @NotNull @Getter int qualifierChoice;
+
+    private @Getter long id = new Random().nextLong(1000000, 9999999);
 
     public String getCompleteName() {
         return tag.fromType(this.type).get(this.qualifierChoice);

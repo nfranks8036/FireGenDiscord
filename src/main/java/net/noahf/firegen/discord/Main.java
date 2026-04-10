@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.noahf.firegen.discord.command.CommandManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.listeners.ButtonDetector;
+import net.noahf.firegen.discord.listeners.ModalDetector;
+import net.noahf.firegen.discord.listeners.StringSelectDetector;
 import net.noahf.firegen.discord.utilities.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +76,7 @@ public class Main {
                 .setEnabledIntents(
                         GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_EXPRESSIONS
                 )
-                .addEventListeners(new ButtonDetector())
+                .addEventListeners(new ButtonDetector(), new ModalDetector(), new StringSelectDetector())
                 .build()
                 .awaitReady();
 

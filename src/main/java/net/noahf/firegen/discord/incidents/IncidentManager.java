@@ -4,11 +4,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.Getter;
+import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.noahf.firegen.discord.command.registered.CreateIncident;
+import net.noahf.firegen.discord.incidents.buttonaction.EditDateTime;
+import net.noahf.firegen.discord.incidents.buttonaction.EditLocation;
+import net.noahf.firegen.discord.incidents.buttonaction.EditType;
 import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.incidents.structure.IncidentLocation;
 import net.noahf.firegen.discord.incidents.structure.IncidentType;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeTag;
+import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
+import net.noahf.firegen.discord.incidents.structure.location.LocationType;
+import net.noahf.firegen.discord.utilities.Log;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,11 +27,16 @@ public class IncidentManager {
 
     private static final String INCIDENT_TYPE_FILE = "incident_types.json";
 
+    private final List<Incident> incidents;
+
     private @Getter IncidentType newIncidentType;
     private @Getter List<IncidentType> incidentTypes;
 
+    private @Getter List<FireGenAction> actions;
+
     public IncidentManager() {
         this.incidentTypes = new ArrayList<>();
+        this.incidents = new ArrayList<>();
         try
                 (InputStream input = CreateIncident.class.getClassLoader().getResourceAsStream(INCIDENT_TYPE_FILE))
         {
@@ -74,6 +86,11 @@ public class IncidentManager {
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }
+
+        this.actions = new ArrayList<>();
+        this.actions.add(new EditType());
+        this.actions.add(new EditDateTime());
+        this.actions.add(new EditLocation());
     }
 
     public IncidentType getTypeFromString(String type) {
@@ -91,6 +108,46 @@ public class IncidentManager {
 
     public List<String> listAllIncidentTypesNamed() {
         return this.listAllIncidentTypes().stream().map(IncidentType::getCompleteName).toList();
+    }
+
+    public Incident createNewIncident() {
+        Incident incident = new Incident(
+                this,
+                new Random(System.currentTimeMillis()).nextLong(1000000, 9999999),
+                this.getNewIncidentType(),
+                new ArrayList<>(),
+                new IncidentLocation(new ArrayList<>(), LocationType.CUSTOM, null, null),
+                LocalDateTime.now(),
+                new ArrayList<>()
+        );
+        this.incidents.add(incident);
+        return incident;
+    }
+
+    public @Nullable Incident getIncidentBy(long id) {
+        for (Incident i : this.incidents) {
+            if (i.getId() == id) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    public void processAction(GenericInteractionCreateEvent event, String incidentId, String command) {
+        Incident incident = this.getIncidentBy(Long.parseLong(incidentId));
+        if (incident == null) {
+            throw new IllegalArgumentException("Incident with ID '" + incidentId + "' does not exist.");
+        }
+
+        Log.info("Searching for command '" + command + "'");
+        for (FireGenAction action : this.actions) {
+            if (!action.getName().equalsIgnoreCase(command)) {
+                continue;
+            }
+            action.execute(incident, event);
+            return;
+        }
+        throw new IllegalStateException("No command found for '" + command + "'");
     }
 
 }

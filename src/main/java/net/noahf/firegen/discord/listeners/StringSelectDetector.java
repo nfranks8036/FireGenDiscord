@@ -1,17 +1,16 @@
 package net.noahf.firegen.discord.listeners;
 
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.noahf.firegen.discord.Main;
-import net.noahf.firegen.discord.incidents.ButtonAction;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
-public class ButtonDetector extends ListenerAdapter {
+public class StringSelectDetector extends ListenerAdapter {
 
     @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+    public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         String id = event.getComponentId();
         User user = event.getUser();
 
@@ -19,7 +18,7 @@ public class ButtonDetector extends ListenerAdapter {
             return;
         }
 
-        Log.info(user.getName() + " (" + user.getIdLong() + ") pressed button '" + id + "'");
+        Log.info(user.getName() + " (" + user.getIdLong() + ") interacted with string selector '" + id + "'");
 
         String incident = id.split("-")[1];
         String command = id.split("-")[2];

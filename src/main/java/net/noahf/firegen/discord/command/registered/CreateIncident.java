@@ -13,7 +13,8 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.incidents.structure.IncidentLocation;
+import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
+import net.noahf.firegen.discord.incidents.structure.location.LocationType;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -39,13 +40,13 @@ public class CreateIncident extends Command {
     @Override
     public void command(SlashCommandInteractionEvent event) {
         OptionMapping typeOption = event.getOption("type");
-        Incident incident = Main.incidents.createIncident();
+        Incident incident = Main.incidents.createNewIncident();
         if (typeOption != null) {
             incident.setType(typeOption.getAsString());
         }
         OptionMapping locationOption = event.getOption("location");
         if (locationOption != null) {
-            incident.setLocation(locationOption.getAsString(), IncidentLocation.LocationType.CUSTOM);
+            incident.setLocation(new IncidentLocation(List.of(locationOption.getAsString()), LocationType.CUSTOM, null, null));
         }
 
         OptionMapping dateOption = event.getOption("date");
@@ -65,19 +66,11 @@ public class CreateIncident extends Command {
         }
         incident.setDate(date, time);
 
-        incident.post();
-
         incident.addContributor(event.getUser().getName());
 
-        event.reply(incident.formatAdmin()).addComponents(
-                ActionRow.of(
-                        Button.primary("firegen-" + incident.getId() + "-incident-type", "Edit Type"),
-                        Button.primary("firegen-" + incident.getId() + "-date-time", "Edit Date/Time"),
-                        Button.primary("firegen-" + incident.getId() + "-location", "Edit Location"),
-                        Button.primary("firegen-" + incident.getId() + "-agencies", "Edit Agencies"),
-                        Button.primary("firegen-" + incident.getId() + "-narrative", "Edit Narrative")
-                )
-        ).queue();
+        event.reply("Created new incident with those details. Check an admin channel for more information.").setEphemeral(true).queue();
+
+        incident.postUpdate();
     }
 
     @Override
