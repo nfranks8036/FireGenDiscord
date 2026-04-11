@@ -3,15 +3,15 @@ package net.noahf.firegen.discord.incidents;
 import lombok.Getter;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.noahf.firegen.discord.incidents.buttonaction.*;
+import net.noahf.firegen.discord.incidents.buttonaction.narrative.AddNarrative;
+import net.noahf.firegen.discord.incidents.buttonaction.narrative.EditNarrative;
+import net.noahf.firegen.discord.incidents.buttonaction.narrative.RemoveNarrative;
 import net.noahf.firegen.discord.incidents.structure.Agency;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.incidents.structure.IncidentType;
-import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
-import net.noahf.firegen.discord.incidents.structure.location.LocationType;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class IncidentManager {
@@ -35,6 +35,8 @@ public class IncidentManager {
         this.actions.add(new EditLocation());
         this.actions.add(new EditAgencies());
         this.actions.add(new EditNarrative());
+        this.actions.add(new AddNarrative());
+        this.actions.add(new RemoveNarrative());
         this.actions.add(new ChangeStatus());
 
         IncidentStructureImporter importer = new IncidentStructureImporter();
@@ -69,6 +71,15 @@ public class IncidentManager {
         for (Incident i : this.incidents) {
             if (i.getId() == id) {
                 return i;
+            }
+        }
+        return null;
+    }
+
+    public @Nullable Agency getAgencyByShorthand(String shorthand) {
+        for (Agency a : this.agencies) {
+            if (a.getShorthand().equalsIgnoreCase(shorthand)) {
+                return a;
             }
         }
         return null;

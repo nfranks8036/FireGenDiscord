@@ -139,18 +139,19 @@
     "format": "Blacksburg Transit",
     "emoji": ":bt:"
   },
-  {
-    "short": "BTSUP",
-    "long": "BLACKSBURG TRANSIT SUPERVISOR",
-    "format": "Supervisor BT",
-    "emoji": ":bt:"
-  },
 
   {
     "short": "VTSC",
     "long": "VIRGINIA TECH SECURITY",
     "format": "Virginia Tech Security",
     "emoji": ":vtsc:"
+  },
+
+  {
+    "short": "LG",
+    "long": "CARILION LIFE-GUARD",
+    "format": "Carilion Life-Guard",
+    "emoji": ":lg:"
   },
 
   {

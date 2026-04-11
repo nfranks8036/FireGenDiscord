@@ -10,14 +10,19 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
+import net.noahf.firegen.discord.incidents.structure.Agency;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
 import net.noahf.firegen.discord.incidents.structure.location.LocationType;
+import net.noahf.firegen.discord.utilities.ErrorEmbed;
+import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Time;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -47,6 +52,19 @@ public class CreateIncident extends Command {
         OptionMapping locationOption = event.getOption("location");
         if (locationOption != null) {
             incident.setLocation(new IncidentLocation(List.of(locationOption.getAsString()), LocationType.CUSTOM, null, null));
+        }
+
+        OptionMapping agenciesOption = event.getOption("agencies");
+        if (agenciesOption != null) {
+            String agenciesString = agenciesOption.getAsString().replaceAll("\\s+", "");
+            String[] agenciesList = agenciesString.split(",");
+            List<Agency> agencies = new ArrayList<>();
+            for (String agencyString : agenciesList) {
+                Agency a = Main.incidents.getAgencyByShorthand(agencyString);
+                if (a == null) continue;
+                agencies.add(a);
+            }
+            incident.setAgencies(agencies);
         }
 
         OptionMapping dateOption = event.getOption("date");
@@ -82,7 +100,44 @@ public class CreateIncident extends Command {
             return Main.incidents.listAllIncidentTypesForAutocomplete();
         }
         if (focused.getName().equalsIgnoreCase("agencies")) {
-            return List.of("test");
+            String input = event.getFocusedOption().getValue().replaceAll("\\s+", "");
+            List<String> allAgencies = Main.incidents.getAgencies().stream().map(Agency::getShorthand).toList();
+
+            String[] parts = input.split(",");
+            List<String> selected = new ArrayList<>();
+
+            String currentToken;
+
+            if (parts.length > 0) {
+                for (int i = 0; i < parts.length - 1; i++) {
+                    selected.add(parts[i].trim().toUpperCase());
+                }
+                currentToken = parts[parts.length - 1].trim().toUpperCase();
+            } else {
+                // this is required to make sure it's effectively final for the lambda in the return 'filter' coming up
+                // we can't just initialize it and change it :(
+                currentToken = "";
+            }
+
+            List<String> available = allAgencies.stream()
+                    .filter(a -> !selected.contains(a))
+                    .map(s -> s + ",")
+                    .toList();
+            List<String> returned = available.stream()
+                    .filter(a -> a.startsWith(currentToken))
+                    .map(a -> {
+                        String suggestion;
+                        if (selected.isEmpty()) {
+                            suggestion = a;
+                        } else {
+                            suggestion = String.join(",", selected) + "," + a;
+                        }
+                        return suggestion;
+                    })
+                    .limit(25)
+                    .toList();
+
+            return returned;
         }
         return null;
     }

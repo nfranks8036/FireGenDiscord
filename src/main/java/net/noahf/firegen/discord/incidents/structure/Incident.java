@@ -65,16 +65,24 @@ public class Incident {
                 // components following are the button row that are used in the admin channel
                 // id should be in the format of 'firegen-<incident ID>-<command>-<additional info>'
                 ActionRow.of(
-                        Button.primary("firegen-" + this.getId() + "-incidenttype", "Edit Type"),
-                        Button.primary("firegen-" + this.getId() + "-datetime", "Edit Date/Time")
-                ),
-                ActionRow.of(
-                        Button.primary("firegen-" + this.getId() + "-location", "Edit Location"),
-                        Button.primary("firegen-" + this.getId() + "-agencies", "Edit Agencies")
-                ),
-                ActionRow.of(
-                        Button.primary("firegen-" + this.getId() + "-narrative", "Edit Narrative"),
+                        Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
                         Button.danger("firegen-" + this.getId() + "-status", "Close Incident")
+                ),
+                ActionRow.of(
+                        Button.secondary("firegen-disabled-incident1", "Edit:").asDisabled(),
+                        Button.primary("firegen-" + this.getId() + "-incidenttype", "Type"),
+                        Button.primary("firegen-" + this.getId() + "-datetime", "Date/Time")
+                ),
+                ActionRow.of(
+                        Button.secondary("firegen-disabled-incident2", "Edit:").asDisabled(),
+                        Button.primary("firegen-" + this.getId() + "-location", "Location"),
+                        Button.primary("firegen-" + this.getId() + "-agencies", "Agencies")
+                ),
+                ActionRow.of(
+                        Button.secondary("firegen-disabled-narrative", "Narrative:").asDisabled(),
+                        Button.success("firegen-" + this.getId() + "-addnarrative", "Add"),
+                        Button.secondary("firegen-" + this.getId() + "-editnarrative", "Edit"),
+                        Button.danger("firegen-" + this.getId() + "-removenarrative", "Rem")
                 )
         ));
     }
@@ -198,7 +206,8 @@ public class Incident {
                 message.editMessageComponents(this.adminComponents).queue();
             } else if (!this.status.isActive() && message.getComponents().size() > 1) {
                 message.editMessageComponents(ActionRow.of(
-                        Button.primary("firegen-" + this.getId() + "-status", "Re-open Incident")
+                        Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
+                        Button.success("firegen-" + this.getId() + "-status", "Re-open Incident")
                 )).queue();
             }
 

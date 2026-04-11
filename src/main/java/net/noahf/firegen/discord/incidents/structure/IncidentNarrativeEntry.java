@@ -15,7 +15,7 @@ public class IncidentNarrativeEntry {
     IncidentNarrativeEntry(LocalDateTime time, long userId, String entry, EntryType type) {
         this.time = time;
         this.userId = userId;
-        this.entry = entry.toUpperCase();
+        this.entry = entry.toUpperCase().strip().replace("\n", "");
         this.type = type;
     }
 
@@ -24,7 +24,7 @@ public class IncidentNarrativeEntry {
     }
 
     public String formatReceiver() {
-        return "<t:" + Time.getUnix(this.time) + ":T> " + entry;
+        return "<t:" + Time.getUnix(this.time) + ":T>| " + entry;
     }
 
     public String formatAdmin() {

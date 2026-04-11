@@ -31,10 +31,7 @@ public class ChangeStatus implements ButtonAction {
             }
         }
 
-        long destruct = Time.getUnixOffset(6, TimeUnit.SECONDS);
-        event.reply("The status of this incident was changed to `" + newStatus + "` from `" + oldStatus + "`" +
-                "\n\n-# This message will self-destruct <t:" + destruct + ":R>"
-        ).setEphemeral(true).complete().deleteOriginal().queueAfter(5, TimeUnit.SECONDS);
+        event.deferReply().setEphemeral(true).complete().deleteOriginal().queue();
         incident.addContributor(event.getUser().getName());
 
         incident.postUpdate();
