@@ -13,7 +13,7 @@ public class IncidentTypeTag {
 
     static {
         DEFAULT = new IncidentTypeTag(null);
-        DEFAULT.name = "fallback";
+        DEFAULT.name = "None";
         DEFAULT.priorities = new ArrayList<>(List.of("1", "2", "3"));
         DEFAULT.qualifier = null;
     }
@@ -83,11 +83,11 @@ public class IncidentTypeTag {
         return returned;
     }
 
-    private static class Qualifier {
+    public static class Qualifier {
         private boolean required;
         private boolean unique;
         private String syntax;
-        private List<String> qualifiers;
+        private @Getter List<String> qualifiers;
     }
 
 }

@@ -12,6 +12,7 @@ import net.noahf.firegen.discord.incidents.ButtonAction;
 import net.noahf.firegen.discord.incidents.ModalAction;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.utilities.ErrorEmbed;
+import net.noahf.firegen.discord.utilities.Time;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import java.time.OffsetDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.concurrent.TimeUnit;
 
 public class EditDateTime implements ButtonAction, ModalAction {
 
@@ -74,8 +76,11 @@ public class EditDateTime implements ButtonAction, ModalAction {
             return;
         }
 
-        long unix = time.atDate(date).toEpochSecond(OffsetDateTime.now().getOffset());
-        event.reply("The date and time for this incident was updated to <t:" + unix + ":d> @ <t:" + unix + ":T>, which was <t:" + unix + ":R>").setEphemeral(true).queue();
+        long unix = Time.getUnix(time.atDate(date));
+        long destruct = Time.getUnixOffset(6, TimeUnit.SECONDS);
+        event.reply("The date and time for this incident was updated to <t:" + unix + ":d> @ <t:" + unix + ":T>, which was <t:" + unix + ":R>" +
+                "\n\n-# This message will self-destruct <t:" + destruct + ":R>"
+        ).setEphemeral(true).complete().deleteOriginal().queueAfter(5, TimeUnit.SECONDS);
         incident.addContributor(event.getUser().getName());
 
         incident.setDate(date, time);

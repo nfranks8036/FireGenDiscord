@@ -40,9 +40,8 @@ public class Main {
 
     private static void loadChannels(JDA jda) {
         adminChannels.add(jda.getTextChannelById(1491906498974978290L)); // BFD Tracker - bot
-        adminChannels.add(jda.getTextChannelById(725503983678128199L)); // Personal - 0
 
-        receiveChannels.add(jda.getTextChannelById(1491906756731863103L)); // Personal - radio-activity
+        receiveChannels.add(jda.getTextChannelById(1492054571005116487L)); // BFD Tracker - bot-output
     }
 
     public static void main(String[] args) throws InterruptedException {

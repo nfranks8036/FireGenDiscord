@@ -13,13 +13,16 @@ import net.noahf.firegen.discord.incidents.ButtonAction;
 import net.noahf.firegen.discord.incidents.ModalAction;
 import net.noahf.firegen.discord.incidents.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.Incident;
+import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
 import net.noahf.firegen.discord.incidents.structure.location.LocationType;
 import net.noahf.firegen.discord.incidents.structure.location.Venue;
+import net.noahf.firegen.discord.utilities.Time;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class EditLocation implements ButtonAction, StringDropdownAction, ModalAction {
 
@@ -93,9 +96,14 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         }
 
         IncidentLocation location = new IncidentLocation(data, type, commonName, venue);
+        String narrative = "Location updated: " + location.format();
 
-        event.reply("The location for this incident was updated to `" + location.format() + "`").setEphemeral(true).queue();
+        long destruct = Time.getUnixOffset(6, TimeUnit.SECONDS);
+        event.editMessage("The location for this incident was updated to `" + location.format() + "`" +
+                "\n\n-# This message will self-destruct <t:" + destruct + ":R>"
+        ).setComponents(new ArrayList<>()).complete().deleteOriginal().queueAfter(5, TimeUnit.SECONDS);
         incident.addContributor(event.getUser().getName());
+        incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.UPDATE, narrative);
 
         incident.setLocation(location);
         incident.postUpdate();

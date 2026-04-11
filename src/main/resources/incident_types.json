@@ -1,7 +1,32 @@
 {
   "types": [
-    {"name": ">>CHOOSE CALL TYPE<<", "tag": "NEW_INCIDENT"},
     {"name": ">NEW<", "tag": "NEW_INCIDENT"},
+    {"name": ">>CHOOSE CALL TYPE<<", "tag": "NEW_INCIDENT"},
+
+    {"name": "MVC", "tag": "MOTOR_VEHICLE_CRASH"},
+    {"name": "HIT & RUN", "tag": "MOTOR_VEHICLE_CRASH"},
+
+    {"name": "FIRE ALARM", "tag": "FIRE_QUALIFIERS"},
+    {"name": "CARBON ALARM", "tag": "FIRE_QUALIFIERS"},
+    {"name": "GAS LEAK", "tag": "FIRE_QUALIFIERS"},
+    {"name": "STRUCTURE FIRE", "tag": "FIRE_QUALIFIERS"},
+
+    {"name": "ELECTRICAL HAZARD", "tag": "FIRE"},
+    {"name": "ILLEGAL BURN", "tag": "FIRE"},
+    {"name": "SMOKE INVESTIGATION", "tag": "FIRE"},
+    {"name": "HAZMAT", "tag": "FIRE"},
+    {"name": "ELEVATOR ENTRAPMENT", "tag": "FIRE"},
+    {"name": "CONTROLLED BURN", "tag": "FIRE"},
+
+    {"name": "VEHICLE FIRE", "tag": "FIRE"},
+    {"name": "BRUSH FIRE", "tag": "FIRE"},
+    {"name": "DUMPSTER FIRE", "tag": "FIRE"},
+    {"name": "CHIMNEY FIRE", "tag": "FIRE"},
+    {"name": "ELECTRICAL FIRE", "tag": "FIRE"},
+
+    {"name": "ASSIST FIRE AGENCY", "tag": "FIRE"},
+    {"name": "FIRE STANDBY", "tag": "FIRE"},
+    {"name": "FIRE SERVICE CALL", "tag": "FIRE"},
 
     {"name": "DOMESTIC", "tag": "POLICE_WITH_WEAPON"},
     {"name": "FIGHT", "tag": "POLICE_WITH_WEAPON"},
@@ -71,28 +96,6 @@
     {"name": "EVENT POLICING", "tag": "POLICE"},
     {"name": "POLICE SERVICE CALL", "tag": "POLICE"},
 
-    {"name": "STRUCTURE FIRE", "tag": "FIRE_QUALIFIERS"},
-    {"name": "FIRE ALARM", "tag": "FIRE_QUALIFIERS"},
-    {"name": "CARBON ALARM", "tag": "FIRE_QUALIFIERS"},
-    {"name": "GAS LEAK", "tag": "FIRE_QUALIFIERS"},
-
-    {"name": "VEHICLE FIRE", "tag": "FIRE"},
-    {"name": "BRUSH FIRE", "tag": "FIRE"},
-    {"name": "DUMPSTER FIRE", "tag": "FIRE"},
-    {"name": "CHIMNEY FIRE", "tag": "FIRE"},
-    {"name": "ELECTRICAL FIRE", "tag": "FIRE"},
-
-    {"name": "ELECTRICAL HAZARD", "tag": "FIRE"},
-    {"name": "ILLEGAL BURN", "tag": "FIRE"},
-    {"name": "SMOKE INVESTIGATION", "tag": "FIRE"},
-    {"name": "HAZMAT", "tag": "FIRE"},
-    {"name": "ELEVATOR ENTRAPMENT", "tag": "FIRE"},
-    {"name": "CONTROLLED BURN", "tag": "FIRE"},
-
-    {"name": "ASSIST FIRE AGENCY", "tag": "FIRE"},
-    {"name": "FIRE STANDBY", "tag": "FIRE"},
-    {"name": "FIRE SERVICE CALL", "tag": "FIRE"},
-
     {"name": "ABDOMINAL PAIN", "tag": "EMS"},
     {"name": "ALLERGIC REACTION", "tag": "EMS"},
     {"name": "ANIMAL ATTACK", "tag": "EMS"},
@@ -138,10 +141,7 @@
     {"name": "ADVISORY", "tag": "GENERIC"},
     {"name": "ASSAULT", "tag": "GENERIC"},
     {"name": "ASSAULT W/ INJURIES", "tag": "GENERIC"},
-    {"name": "MASS CASUALTY INCIDENT", "tag": "GENERIC"},
-
-    {"name": "MVC", "tag": "MOTOR_VEHICLE_CRASH"},
-    {"name": "HIT & RUN", "tag": "MOTOR_VEHICLE_CRASH"}
+    {"name": "MASS CASUALTY INCIDENT", "tag": "GENERIC"}
   ],
 
   "tags": [

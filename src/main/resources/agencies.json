@@ -1,0 +1,162 @@
+[
+  {
+    "short": "BFD",
+    "long": "BLACKSBURG FIRE DEPARTMENT",
+    "format": "Blacksburg Fire",
+    "emoji": ":bfd:"
+  },
+  {
+    "short": "EVFD",
+    "long": "ELLISTON VOLUNTEER FIRE DEPARTMENT",
+    "format": "Elliston Fire",
+    "emoji": ":evfd:"
+  },
+  {
+    "short": "LMRS",
+    "long": "LONGSHOP-MCCOY RESCUE SQUAD",
+    "format": "Longshop-McCoy Rescue",
+    "emoji": ":lmfr:"
+  },
+  {
+    "short": "RVFD",
+    "long": "RINER VOLUNTEER FIRE DEPARTMENT",
+    "format": "Riner Fire",
+    "emoji": ":rfd:"
+  },
+  {
+    "short": "BVRS",
+    "long": "BLACKSBURG VOLUNTEER RESCUE SQUAD",
+    "format": "Blacksburg Rescue",
+    "emoji": ":bvrs:"
+  },
+  {
+    "short": "SUP5",
+    "long": "SUPERVISOR 5",
+    "format": "Supervisor 5",
+    "emoji": ":bvrs:"
+  },
+  {
+    "short": "LMFD",
+    "long": "LONGSHOP-MCCOY FIRE DEPARTMENT",
+    "format": "Longshop-McCoy Fire",
+    "emoji": ":lmfr:"
+  },
+  {
+    "short": "CFD",
+    "long": "CHRISTIANSBURG FIRE DEPARTMENT",
+    "format": "Christiansburg Fire",
+    "emoji": ":cfd:"
+  },
+  {
+    "short": "CRS",
+    "long": "CHRISTIANSBURG RESCUE SQUAD",
+    "format": "Christiansburg Rescue",
+    "emoji": ":crs:"
+  },
+  {
+    "short": "SUP9",
+    "long": "SUPERVISOR 9",
+    "format": "Supervisor 9",
+    "emoji": ":crs:"
+  },
+  {
+    "short": "RVRS",
+    "long": "RINER VOLUNTEER RESCUE SQUAD",
+    "format": "Riner Rescue",
+    "emoji": ":rvrs:"
+  },
+  {
+    "short": "M13-1",
+    "long": "MEDIC 13-1",
+    "format": "Medic 13-1",
+    "emoji": ":mcfr:"
+  },
+  {
+    "short": "M13-2",
+    "long": "MEDIC 13-2",
+    "format": "Medic 13-2",
+    "emoji": ":mcfr:"
+  },
+  {
+    "short": "MCFR",
+    "long": "MONTGOMERY COUNTY FIRE & EMS",
+    "format": "Montgomery County Fire & EMS",
+    "emoji": ":mcfr:"
+  },
+  {
+    "short": "SUP13",
+    "long": "SUPERVISOR 13",
+    "format": "Supervisor 13",
+    "emoji": ":mcfr:"
+  },
+  {
+    "short": "VTRS",
+    "long": "VIRGINIA TECH RESCUE SQUAD",
+    "format": "Virginia Tech Rescue",
+    "emoji": ":vtrs:"
+  },
+  {
+    "short": "SUP15",
+    "long": "SUPERVISOR 15",
+    "format": "Supervisor 15",
+    "emoji": ":vtrs:"
+  },
+
+  {
+    "short": "MCSO",
+    "long": "MONTGOMERY COUNTY SHERIFF'S OFFICE",
+    "format": "Montgomery County Sheriff",
+    "emoji": ":mcso:"
+  },
+  {
+    "short": "CPD",
+    "long": "CHRISTIANSBURG POLICE DEPARTMENT",
+    "format": "Christiansburg Police",
+    "emoji": ":cpd:"
+  },
+  {
+    "short": "BPD",
+    "long": "BLACKSBURG POLICE DEPARTMENT",
+    "format": "Blacksburg Police",
+    "emoji": ":bpd:"
+  },
+  {
+    "short": "VTPD",
+    "long": "VIRGINIA TECH POLICE DEPARTMENT",
+    "format": "Virginia Tech Police",
+    "emoji": ":vtpd:"
+  },
+  {
+    "short": "VSP",
+    "long": "VIRGINIA STATE POLICE",
+    "format": "Virginia State Police",
+    "emoji": ":vsp:"
+  },
+
+  {
+    "short": "BT",
+    "long": "BLACKSBURG TRANSIT",
+    "format": "Blacksburg Transit",
+    "emoji": ":bt:"
+  },
+  {
+    "short": "BTSUP",
+    "long": "BLACKSBURG TRANSIT SUPERVISOR",
+    "format": "Supervisor BT",
+    "emoji": ":bt:"
+  },
+
+  {
+    "short": "VTSC",
+    "long": "VIRGINIA TECH SECURITY",
+    "format": "Virginia Tech Security",
+    "emoji": ":vtsc:"
+  },
+
+  {
+    "short": "NRV",
+    "long": "NEW RIVER VALLEY 911 AUTHORITY",
+    "format": "New River Valley 911 Authority",
+    "emoji": ":nrv:"
+  }
+]

@@ -1,12 +1,20 @@
 package net.noahf.firegen.discord.incidents.structure;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import net.dv8tion.jda.api.components.selections.SelectOption;
 
+@AllArgsConstructor
 public class Agency {
 
-    private @Getter @Setter(value = AccessLevel.PACKAGE) String agencyLong;
-    private @Getter @Setter(value = AccessLevel.PACKAGE) String agencyFormatted;
-    private @Getter @Setter(value = AccessLevel.PACKAGE) String agencyShorthand;
+    private @Getter String shorthand;
+    private @Getter String longhand;
+    private @Getter String formatted;
+    private @Getter String emoji;
+
+    private @Getter SelectOption selectOption;
+
+    @Override
+    public String toString() {
+        return shorthand;
+    }
 }

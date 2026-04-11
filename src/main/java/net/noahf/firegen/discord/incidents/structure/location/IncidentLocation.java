@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +15,10 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class IncidentLocation {
+
+    public IncidentLocation() {
+        this(new ArrayList<>(), LocationType.CUSTOM, null, null);
+    }
 
     private @Getter List<String> data;
     private @Getter LocationType type;
