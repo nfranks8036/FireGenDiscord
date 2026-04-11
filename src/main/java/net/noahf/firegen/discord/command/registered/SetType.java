@@ -58,7 +58,7 @@ public class SetType extends Command {
         incident.addContributor(event.getUser().getName());
         incident.postUpdate();
 
-        if (reasonOption.getAsString().startsWith("hide:")) {
+        if (!reasonOption.getAsString().startsWith("hide:")) {
             incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.UPDATE,
                     "Changed incident type from '" + oldType + "' to '" + type + "' due to " + reason
             );

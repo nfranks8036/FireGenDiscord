@@ -39,9 +39,9 @@ public class Main {
     public static List<TextChannel> receiveChannels = new ArrayList<>();
 
     private static void loadChannels(JDA jda) {
-        adminChannels.add(jda.getTextChannelById(1491906498974978290L)); // BFD Tracker - bot
+        adminChannels.add(jda.getTextChannelById(1492362581623439581L)); // BFD Tracker - bot
 
-        receiveChannels.add(jda.getTextChannelById(1492054571005116487L)); // BFD Tracker - bot-output
+        receiveChannels.add(jda.getTextChannelById(1492362595439611925L)); // BFD Tracker - bot-output
     }
 
     public static void main(String[] args) throws InterruptedException {

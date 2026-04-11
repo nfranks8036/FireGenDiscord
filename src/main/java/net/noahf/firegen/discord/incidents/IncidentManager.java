@@ -4,8 +4,7 @@ import lombok.Getter;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.noahf.firegen.discord.incidents.buttonaction.*;
 import net.noahf.firegen.discord.incidents.buttonaction.narrative.AddNarrative;
-import net.noahf.firegen.discord.incidents.buttonaction.narrative.EditNarrative;
-import net.noahf.firegen.discord.incidents.buttonaction.narrative.RemoveNarrative;
+import net.noahf.firegen.discord.incidents.buttonaction.narrative.HideNarrative;
 import net.noahf.firegen.discord.incidents.structure.Agency;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.incidents.structure.IncidentType;
@@ -34,9 +33,8 @@ public class IncidentManager {
         this.actions.add(new EditDateTime());
         this.actions.add(new EditLocation());
         this.actions.add(new EditAgencies());
-        this.actions.add(new EditNarrative());
         this.actions.add(new AddNarrative());
-        this.actions.add(new RemoveNarrative());
+        this.actions.add(new HideNarrative());
         this.actions.add(new ChangeStatus());
 
         IncidentStructureImporter importer = new IncidentStructureImporter();

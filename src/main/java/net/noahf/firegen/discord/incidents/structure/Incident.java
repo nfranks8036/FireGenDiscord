@@ -81,8 +81,7 @@ public class Incident {
                 ActionRow.of(
                         Button.secondary("firegen-disabled-narrative", "Narrative:").asDisabled(),
                         Button.success("firegen-" + this.getId() + "-addnarrative", "Add"),
-                        Button.secondary("firegen-" + this.getId() + "-editnarrative", "Edit"),
-                        Button.danger("firegen-" + this.getId() + "-removenarrative", "Rem")
+                        Button.danger("firegen-" + this.getId() + "-hidenarrative", "Hide")
                 )
         ));
     }
@@ -122,6 +121,22 @@ public class Incident {
 
     public void addNarrative(User user, IncidentNarrativeEntry.EntryType type, String narrative) {
         this.narrative.add(new IncidentNarrativeEntry(LocalDateTime.now(), user.getIdLong(), narrative, type));
+    }
+
+    public List<IncidentNarrativeEntry> getOutputNarrative() {
+        return this.narrative.stream().filter(ine -> ine.getType() == IncidentNarrativeEntry.EntryType.NARRATIVE).toList();
+    }
+
+    public void injectNarrative(IncidentNarrativeEntry entry) {
+        for (int i = 0; i < this.narrative.size(); i++) {
+            IncidentNarrativeEntry element = this.narrative.get(i);
+            if (element.getId() != entry.getId()) {
+                continue;
+            }
+            this.narrative.set(i, entry);
+            return;
+        }
+        throw new IllegalStateException("Narrative with ID '" + entry.getId() + "' does not exist in the incident with ID '" + this.getFormattedId() + "'");
     }
 
     public void setAgencies(List<Agency> agencies) {
@@ -248,11 +263,11 @@ public class Incident {
         }
         return new EmbedBuilder()
                         .setTitle("ADMIN OVERVIEW")
-                        .setDescription("Incident `" + this.getFormattedId() + "`\n"
-                                + "Messages (" + this.receivingMessages.size() + "): " + String.join(" , ", this.receivingMessages.stream().map(msg ->
+                        .setDescription("Incident `" + this.getFormattedId() + "`"
+                                + "\nStatus: " + this.status.getEmoji() + " " + this.status.name()
+                                + "\nMessages (" + this.receivingMessages.size() + "): " + String.join(" , ", this.receivingMessages.stream().map(msg ->
                                     "https://discord.com/channels/" + msg.getGuild().getId() + "/" + msg.getChannel().getId() + "/" + msg.getId()
                                 ).toList())
-                                + "\nStatus: " + this.status.getEmoji() + " " + this.status.name()
                         )
                         .setFooter("Contributors: " + String.join(", ", this.contributors))
                         .addField("Call Type",
