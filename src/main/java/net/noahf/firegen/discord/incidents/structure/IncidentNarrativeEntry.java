@@ -25,11 +25,16 @@ public class IncidentNarrativeEntry {
     }
 
     public enum EntryType {
-        UPDATE, NARRATIVE, HIDDEN
+        UPDATE(false), NARRATIVE(true), HIDDEN(true);
+
+        private final @Getter boolean editable;
+        EntryType(boolean editable) {
+            this.editable = editable;
+        }
     }
 
     public String formatReceiver() {
-        return "<t:" + Time.getUnix(this.time) + ":T>| " + entry;
+        return "<t:" + Time.getUnix(this.time) + ":t> | " + entry;
     }
 
     public String formatAdmin() {

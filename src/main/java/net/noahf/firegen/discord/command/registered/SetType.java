@@ -13,8 +13,7 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.buttonaction.EditType;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
-import net.noahf.firegen.discord.incidents.structure.IncidentType;
-import net.noahf.firegen.discord.utilities.ErrorEmbed;
+import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Time;
 
 import java.util.List;
@@ -35,39 +34,45 @@ public class SetType extends Command {
     @Override
     public void command(SlashCommandInteractionEvent event) {
         Incident incident = EditType.editIncidents.get(event.getUser());
+
         if (incident == null) {
-            event.replyEmbeds(ErrorEmbed.error("You are not currently editing an incident. Press 'Edit Type' to edit the incident type.")).queue();
+            DiscordMessages.error(event, "You are not currently editing an incident. Press 'Edit Type' of the incident of your choice to edit the incident type.");
             return;
         }
 
+        // store old type for the narrative in the future
         String oldType = incident.getType().getCompleteName();
 
         OptionMapping typeOption = event.getOption("new-type");
         OptionMapping reasonOption = event.getOption("reason");
         if (typeOption == null || reasonOption == null) {
-            event.replyEmbeds(ErrorEmbed.error("Expected argument 'new-type' and 'reason' to be set, found one to not be set.")).queue(); return;
+            // this realistically should not happen because the 'required' flag is set on these Options for Discord
+            // but this prevents compiler warnings AND YOU CAN NEVER BE TOO SURE
+            DiscordMessages.error(event, "Expected argument 'new-type' and 'reason' to be set, found one to not be set.");
+            return;
         }
 
-        String type = typeOption.getAsString().toUpperCase();
+        String type = typeOption.getAsString().toUpperCase(); // all call types should be uppercase to match CAD
         String reason = reasonOption.getAsString();
-        if (reason.startsWith("hide:")) {
-            reason = reason.substring("hide:".length());
-        }
+        boolean hiddenFromNarrative = reason.startsWith("hide:");
+
+        // we do not need to worry about removing 'hide:' from the narrative as it will not used or saved anyways
 
         incident.setType(type);
-        incident.addContributor(event.getUser().getName());
-        incident.postUpdate();
+        incident.addContributor(event.getUser().getName()); // they have contributed
 
-        if (!reasonOption.getAsString().startsWith("hide:")) {
+        if (!hiddenFromNarrative) { // if not hidden
             incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.UPDATE,
                     "Changed incident type from '" + oldType + "' to '" + type + "' due to " + reason
             );
         }
 
-        long destruct = Time.getUnixOffset(6, TimeUnit.SECONDS);
-        event.reply("Set incident type to `" + type + "` due to '" + reason + "'" +
-                "\n\n-# This message will self-destruct <t:" + destruct + ":R>"
-        ).setEphemeral(true).complete().deleteOriginal().queueAfter(5, TimeUnit.SECONDS);
+        // post update only after the narrative option has been added
+        incident.postUpdate();
+
+        DiscordMessages.selfDestruct(event, 5,
+                "Set incident type to `" + type + "` due to '" + reason + "'"
+        );
     }
 
     @Override
@@ -75,6 +80,7 @@ public class SetType extends Command {
         if (focused.getName().equalsIgnoreCase("new-type")) {
             return Main.incidents.listAllIncidentTypesForAutocomplete();
         }
+
         return null;
     }
 }

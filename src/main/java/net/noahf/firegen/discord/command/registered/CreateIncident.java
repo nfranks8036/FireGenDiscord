@@ -13,28 +13,29 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.Agency;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
-import net.noahf.firegen.discord.incidents.structure.location.LocationType;
-import net.noahf.firegen.discord.utilities.ErrorEmbed;
-import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Time;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class CreateIncident extends Command {
+
+    private static final String DATE_IMPORT_FORMAT = "MM/dd/yyyy";
+    private static final String TIME_IMPORT_FORMAT = "HH:mm";
 
     public CreateIncident() {
         super("create-incident", "Creates an incident to put in radio activity.",
                 CommandFlags.include()
                         .options(new OptionData[]{
                                 new OptionData(OptionType.STRING, "type", "REQUIRED: The type of incident.", true, true),
-                                new OptionData(OptionType.STRING, "time", "The time (HH:mm) of the incident, will default to today if no 'date' field is set.", false, false),
-                                new OptionData(OptionType.STRING, "date", "The date (MM/dd/yyyy) of the incident, MUST set a 'time' field if this field is set.", false, false),
+                                new OptionData(OptionType.STRING, "time", "The time (" + TIME_IMPORT_FORMAT +") of the incident, will default to today if no 'date' field is set.", false, false),
+                                new OptionData(OptionType.STRING, "date", "The date (" + DATE_IMPORT_FORMAT + ") of the incident, MUST set a 'time' field if this field is set.", false, false),
                                 new OptionData(OptionType.STRING, "location", "The location of the incident.", false, false),
                                 new OptionData(OptionType.STRING, "agencies", "Any agencies attached, separated with a comma.", false, true)
                         })
@@ -44,101 +45,139 @@ public class CreateIncident extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
-        OptionMapping typeOption = event.getOption("type");
         Incident incident = Main.incidents.createNewIncident();
+
+        // ---------- incident type ----------
+        OptionMapping typeOption = event.getOption("type");
         if (typeOption != null) {
             incident.setType(typeOption.getAsString());
         }
+
+        // ---------- incident location ----------
         OptionMapping locationOption = event.getOption("location");
         if (locationOption != null) {
-            incident.setLocation(new IncidentLocation(List.of(locationOption.getAsString()), LocationType.CUSTOM, null, null));
+            incident.setLocation(new IncidentLocation(List.of(locationOption.getAsString())));
         }
 
+        // ---------- incident agencies ----------
         OptionMapping agenciesOption = event.getOption("agencies");
         if (agenciesOption != null) {
+            // remove whitespace from the agencies string, we don't care if they put a space or not after a comma
             String agenciesString = agenciesOption.getAsString().replaceAll("\\s+", "");
+
             String[] agenciesList = agenciesString.split(",");
+
             List<Agency> agencies = new ArrayList<>();
             for (String agencyString : agenciesList) {
+                // required syntax of command is the shorthand. e.g., "BFD,BVRS,SUP5,BPD,VTPD"
                 Agency a = Main.incidents.getAgencyByShorthand(agencyString);
                 if (a == null) continue;
+
                 agencies.add(a);
             }
             incident.setAgencies(agencies);
         }
 
+        // ---------- incident date and time ----------
         OptionMapping dateOption = event.getOption("date");
         OptionMapping timeOption = event.getOption("time");
-        LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now();
+        LocalDate date = LocalDate.now(); // default to now if no date provided
+        LocalTime time = LocalTime.now(); // default to now if no time provided
         if (timeOption != null) {
-            time = LocalTime.parse(timeOption.getAsString(), DateTimeFormatter.ofPattern("HH:mm"));
+
+            String timeString = timeOption.getAsString();
+            try {
+                time = LocalTime.parse(timeString, DateTimeFormatter.ofPattern(TIME_IMPORT_FORMAT));
+            } catch (DateTimeParseException e) {
+                DiscordMessages.error(event, "Failed to parse your time, expected format '" + TIME_IMPORT_FORMAT + "', got '" + timeString + "'", e);
+                return;
+            }
+
         }
 
         if (dateOption != null) {
             if (timeOption == null) {
-                // set earlier, so we can ignore this and throw the error only
+                DiscordMessages.error(event, "You must set a time if you also select a date.");
                 return;
             }
-            date = LocalDate.parse(dateOption.getAsString(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+            String dateString = dateOption.getAsString();
+            try {
+                date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DATE_IMPORT_FORMAT));
+            } catch (DateTimeParseException e) {
+                DiscordMessages.error(event, "Failed to parse your date, expected format '" + DATE_IMPORT_FORMAT + "', got '" + dateString + "'", e);
+                return;
+            }
         }
         incident.setDate(date, time);
 
+        // ---------- incident contributors // begin list ----------
         incident.addContributor(event.getUser().getName());
 
-        long destruct = Time.getUnixOffset(6, TimeUnit.SECONDS);
-        event.reply("Created new incident with those details. Check an admin channel for more information." +
-                "\n\n-# This message will self-destruct <t:" + destruct + ":R>"
-        ).setEphemeral(true).complete().deleteOriginal().queueAfter(5, TimeUnit.SECONDS);
-
+        // ---------- post update for first time to channels ----------
         incident.postUpdate();
+
+        DiscordMessages.selfDestruct(event, 5,
+                "Created new incident with those details. Check an admin channel for more information."
+        );
     }
 
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
-        if (focused.getName().equalsIgnoreCase("type")) {
-            return Main.incidents.listAllIncidentTypesForAutocomplete();
-        }
-        if (focused.getName().equalsIgnoreCase("agencies")) {
-            String input = event.getFocusedOption().getValue().replaceAll("\\s+", "");
-            List<String> allAgencies = Main.incidents.getAgencies().stream().map(Agency::getShorthand).toList();
+        return switch (focused.getName()) {
+            case "type" ->
+                // send the list of all motor vehicle crashes
+                Main.incidents.listAllIncidentTypesForAutocomplete();
 
-            String[] parts = input.split(",");
-            List<String> selected = new ArrayList<>();
+            case "agencies" -> {
+                // the format for the agencies parameter is: <AGENCY 1>,<AGENCY 2>,<AGENCY 3> (e.g., BFD,BVRS,SUP5)
+                // we are attempting to have autocomplete minimic this format to the best of its ability
+                // -------- [ BELOW THIS LINE CONTAINS SOME LLM-WRITTEN OR MODIFIED CODE ] --------
 
-            String currentToken;
+                // remove whitespace - we do not care about it
+                String input = event.getFocusedOption().getValue().replaceAll("\\s+", "");
 
-            if (parts.length > 0) {
-                for (int i = 0; i < parts.length - 1; i++) {
-                    selected.add(parts[i].trim().toUpperCase());
+                // the input for the agencies field will only take in the shorthands (e.g., 'SUP5' not 'Supervisor 5')
+                List<String> allAgencies = Main.incidents.getAgencies().stream().map(Agency::getShorthand).toList();
+
+                String[] parts = input.split(",");
+                List<String> selected = new ArrayList<>();
+
+                String currentToken;
+                if (parts.length > 0) {
+                    for (int i = 0; i < parts.length - 1; i++) {
+                        selected.add(parts[i].trim().toUpperCase());
+                    }
+                    currentToken = parts[parts.length - 1].trim().toUpperCase();
+                } else {
+                    // this is required to make sure it's effectively final for the lambda in the return 'filter' coming up
+                    // we can't just initialize it and change it :(
+                    currentToken = "";
                 }
-                currentToken = parts[parts.length - 1].trim().toUpperCase();
-            } else {
-                // this is required to make sure it's effectively final for the lambda in the return 'filter' coming up
-                // we can't just initialize it and change it :(
-                currentToken = "";
+
+                List<String> available = allAgencies.stream()
+                        .filter(a -> !selected.contains(a))
+                        .map(s -> s + ",")
+                        .toList();
+
+                // yield = return in a switch statement for those who didn't know (I didn't)
+                yield available.stream()
+                        .filter(a -> a.startsWith(currentToken))
+                        .map(a -> {
+                            String suggestion;
+                            if (selected.isEmpty()) {
+                                suggestion = a;
+                            } else {
+                                suggestion = String.join(",", selected) + "," + a;
+                            }
+                            return suggestion;
+                        })
+                        .limit(25)
+                        .toList();
+                // -------- [ ABOVE THIS LINE CONTAINS SOME LLM-WRITTEN OR MODIFIED CODE ] --------
             }
 
-            List<String> available = allAgencies.stream()
-                    .filter(a -> !selected.contains(a))
-                    .map(s -> s + ",")
-                    .toList();
-            List<String> returned = available.stream()
-                    .filter(a -> a.startsWith(currentToken))
-                    .map(a -> {
-                        String suggestion;
-                        if (selected.isEmpty()) {
-                            suggestion = a;
-                        } else {
-                            suggestion = String.join(",", selected) + "," + a;
-                        }
-                        return suggestion;
-                    })
-                    .limit(25)
-                    .toList();
-
-            return returned;
-        }
-        return null;
+            default -> null;
+        };
     }
 }

@@ -9,4 +9,8 @@ public interface FireGenAction {
 
     void execute(Incident incident, GenericInteractionCreateEvent event);
 
+    default String callbackId(Incident incident) {
+        return incident.createInteractionIdString(this.getName());
+    }
+
 }

@@ -11,17 +11,15 @@ import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.discord.incidents.ButtonAction;
 import net.noahf.firegen.discord.incidents.ModalAction;
 import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.utilities.ErrorEmbed;
+import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Time;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.concurrent.TimeUnit;
 
 public class EditDateTime implements ButtonAction, ModalAction {
@@ -60,7 +58,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
     public void execute(Incident incident, ModalInteractionEvent event) {
         ModalMapping timeMapping = event.getValue("time");
         if (timeMapping == null) {
-            event.replyEmbeds(ErrorEmbed.error("Expected value 'time' to be set in modal, found none.")).setEphemeral(true).queue();
+            event.replyEmbeds(DiscordMessages.error("Expected value 'time' to be set in modal, found none.")).setEphemeral(true).queue();
             return;
         }
         LocalTime time = LocalTime.parse(timeMapping.getAsString(), DateTimeFormatter.ofPattern("HH:mm:ss"));
@@ -72,7 +70,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
         }
 
         if (date.isAfter(ChronoLocalDate.from(LocalDateTime.now(OffsetDateTime.now().getOffset())))) {
-            event.replyEmbeds(ErrorEmbed.error("Cannot set the date and time to a future date!")).setEphemeral(true).queue();
+            event.replyEmbeds(DiscordMessages.error("Cannot set the date and time to a future date!")).setEphemeral(true).queue();
             return;
         }
 

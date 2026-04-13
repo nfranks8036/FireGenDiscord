@@ -24,6 +24,12 @@ public class ListDiff<T> {
     private final @Getter List<T> added;
     private final @Getter List<T> removed;
 
+    public List<T> getDifferences() {
+        List<T> differences = new ArrayList<>(added);
+        differences.addAll(removed);
+        return differences;
+    }
+
     @Override
     public String toString() {
         return "ListDiff[added=" + added + ", removed=" + removed + "]";

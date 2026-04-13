@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class IncidentLocation {
 
-    public IncidentLocation() {
-        this(new ArrayList<>(), LocationType.CUSTOM, null, null);
+    public IncidentLocation(List<String> custom) {
+        this(custom, LocationType.CUSTOM, null, null);
     }
 
     private @Getter List<String> data;

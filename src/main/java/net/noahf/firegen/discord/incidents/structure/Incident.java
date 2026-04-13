@@ -52,7 +52,7 @@ public class Incident {
         this.id = new Random(System.currentTimeMillis()).nextLong(1000000, 9999999);
         this.status = IncidentStatus.PENDING;
         this.type = this.manager.getNewIncidentType();
-        this.location = new IncidentLocation();
+        this.location = new IncidentLocation(new ArrayList<>());
         this.time = LocalDateTime.now();
 
         this.agencies = new ArrayList<>();
@@ -123,8 +123,8 @@ public class Incident {
         this.narrative.add(new IncidentNarrativeEntry(LocalDateTime.now(), user.getIdLong(), narrative, type));
     }
 
-    public List<IncidentNarrativeEntry> getOutputNarrative() {
-        return this.narrative.stream().filter(ine -> ine.getType() == IncidentNarrativeEntry.EntryType.NARRATIVE).toList();
+    public List<IncidentNarrativeEntry> getEditableNarrative() {
+        return this.narrative.stream().filter(ine -> ine.getType().isEditable()).toList();
     }
 
     public void injectNarrative(IncidentNarrativeEntry entry) {
@@ -146,6 +146,13 @@ public class Incident {
             this.status =  IncidentStatus.ACTIVE;
         }
         this.agencies = agencies;
+    }
+
+    public String createInteractionIdString(String command) {
+        return String.format(
+                "firegen-%s-%s",
+                this.getId(), command
+        );
     }
 
     public @NotNull List<String> formatNarrative(boolean admin) {
@@ -240,8 +247,8 @@ public class Incident {
                         **Responding:** %s
                         **Location:** %s""" +
                         (!narrative.isEmpty() ? "\n\n**Narrative:**\n%s" : ""),
-                this.type.getCompleteName(),
                 this.status.getEmoji(),
+                this.type.getCompleteName(),
                 getUnix(), getUnix(), getUnix(),
                 String.join(", ", this.agencies.stream().map(Agency::getFormatted).toList()),
                 this.location.format(),

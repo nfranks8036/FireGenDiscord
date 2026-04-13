@@ -50,9 +50,12 @@
     {"name": "ARMED SUBJECT", "tag": "POLICE"},
     {"name": "BOMB THREAT", "tag": "POLICE"},
     {"name": "EVACUATION", "tag": "POLICE"},
+    {"name": "SHOTS FIRED", "tag": "POLICE"},
+    {"name": "SHOTS FIRED BY POLICE", "tag": "POLICE"},
 
     {"name": "DISABLED VEHICLE", "tag": "POLICE"},
     {"name": "LOCK OUT", "tag": "POLICE"},
+    {"name": "KEYS LOCKED IN VEHICLE", "tag": "POLICE"},
     {"name": "TRAFFIC HAZARD", "tag": "POLICE"},
     {"name": "INTOXICATED PERSON", "tag": "POLICE"},
     {"name": "NOISE COMPLAINT", "tag": "POLICE"},
@@ -141,7 +144,15 @@
     {"name": "ADVISORY", "tag": "GENERIC"},
     {"name": "ASSAULT", "tag": "GENERIC"},
     {"name": "ASSAULT W/ INJURIES", "tag": "GENERIC"},
-    {"name": "MASS CASUALTY INCIDENT", "tag": "GENERIC"}
+    {"name": "MASS CASUALTY INCIDENT", "tag": "GENERIC"},
+
+    {"name": "COMMUNITY EVENT", "tag": "GENERIC"},
+    {"name": "COMMUNITY EVENT - PARK WALK AND TALK", "tag": "GENERIC"},
+    {"name": "COMMUNITY EVENT - EDUCATIONAL", "tag": "GENERIC"},
+    {"name": "COMMUNITY EVENT - RECREATIONAL", "tag": "GENERIC"},
+    {"name": "COMMUNITY EVENT - OUT OF JURISDICTION", "tag": "GENERIC"},
+
+    {"name": "TEST CALL", "tag":  "GENERIC"}
   ],
 
   "tags": [
