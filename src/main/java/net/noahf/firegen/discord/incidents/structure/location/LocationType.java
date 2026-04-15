@@ -1,15 +1,13 @@
 package net.noahf.firegen.discord.incidents.structure.location;
 
 import lombok.Getter;
+import net.dv8tion.jda.api.components.Component;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.noahf.firegen.discord.incidents.structure.Incident;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
-import static net.noahf.firegen.discord.incidents.structure.location.IncidentLocation.COMMON_NAME;
-import static net.noahf.firegen.discord.incidents.structure.location.IncidentLocation.VENUE;
+import static net.noahf.firegen.discord.incidents.structure.location.Venue.*;
 
 public enum LocationType {
     ADDRESS(
@@ -28,8 +26,8 @@ public enum LocationType {
                     .setPlaceholder("Ex: Commerce St")
                     .build()
             ),
-            COMMON_NAME,
-            VENUE
+            VENUE_COMPONENT,
+            COMMON_NAME_COMPONENT
     ),
     MILE_MARKER(
             "A mile-marker or landmark on a road. Requires: Mile marker/landmark, road name. Allows: Venue.",
@@ -46,7 +44,7 @@ public enum LocationType {
                     .setPlaceholder("Ex: MM 114 *OR* Exit 5")
                     .build()
             ),
-            VENUE
+            VENUE_COMPONENT
     ),
     LATITUDE_LONGITUDE(
             "A latitude and longitude. Requires: Two float values. Allows: Additional information, venue.",
@@ -66,7 +64,7 @@ public enum LocationType {
                     .setRequired(false)
                     .setPlaceholder("Ex: Parking Lot of Blacksburg Transit").build()
             ),
-            VENUE
+            VENUE_COMPONENT
     ),
     INTERSECTION(
             "An intersection of two roads. Requires: Two or more roads. Allows: Multiple roads.",
@@ -132,10 +130,29 @@ public enum LocationType {
     );
 
     private final @Getter String description;
-    private final @Getter Label[] label;
+    private final Component[] components;
 
-    LocationType(String description, Label... label) {
+    LocationType(String description, Component... components) {
         this.description = description;
-        this.label = label;
+        this.components = components;
+    }
+
+    public String displayName() {
+        return this.name().toUpperCase().replace(" ", "_");
+    }
+
+    public Label[] getLabels(Incident incident) {
+        Label[] labels = new Label[this.components.length];
+        for (int i = 0; i < labels.length; i++) {
+            Component component = this.components[i];
+            if (component.getUniqueId() == VENUE_ID) {
+                labels[i] = incident.getLocation().VENUE;
+            } else if (component.getUniqueId() == COMMON_NAME_ID) {
+                labels[i] = incident.getLocation().COMMON_NAME;
+            } else {
+                labels[i] = (Label) component;
+            }
+        }
+        return labels;
     }
 }

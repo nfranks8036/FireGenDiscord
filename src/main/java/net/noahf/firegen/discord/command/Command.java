@@ -7,18 +7,17 @@ import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import net.noahf.firegen.discord.Main;
-import net.noahf.firegen.discord.utilities.Log;
-import org.reflections.Reflections;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents an abstract Command. This is the class that all commands should extend to provide proper functionality.
+ * To be autoregistered, the command must be located in the {@link CommandManager#COMMANDS_PACKAGE commands package}.
+ */
 public abstract class Command {
 
     final String name;

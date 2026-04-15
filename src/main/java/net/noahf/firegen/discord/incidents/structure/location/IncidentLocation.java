@@ -5,13 +5,11 @@ import lombok.Getter;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.noahf.firegen.discord.Main;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class IncidentLocation {
@@ -19,6 +17,22 @@ public class IncidentLocation {
     public IncidentLocation(List<String> custom) {
         this(custom, LocationType.CUSTOM, null, null);
     }
+
+    final Label COMMON_NAME = Label.of("Common Name", "OPTIONAL: The name the general public may know this place by.", TextInput.create("common-name", TextInputStyle.SHORT)
+            .setRequired(false)
+            .setMaxLength(100)
+            .setPlaceholder("Ex: Blacksburg Transit")
+            .build()
+    );
+    final Label VENUE = Label.of("Venue",
+            "OPTIONAL: ALLOWED: " + Main.incidents.getConcatenatedVenues().substring(0, Math.min(100 - "OPTIONAL: ALLOWED: ".length(), Main.incidents.getConcatenatedVenues().length())),
+            TextInput.create("venue", TextInputStyle.SHORT)
+                    .setRequired(false)
+                    .setPlaceholder(Main.incidents.getVenues().get(0).getName())
+                    .setMaxLength(Main.incidents.getVenues().stream().map(Venue::getName).max(Comparator.comparingInt(String::length)).stream().findFirst().orElse(" ".repeat(100)).length())
+                    .setMinLength(Main.incidents.getVenues().stream().map(Venue::getName).min(Comparator.comparingInt(String::length)).stream().findFirst().orElse(" ".repeat(1)).length())
+                    .build()
+    );
 
     private @Getter List<String> data;
     private @Getter LocationType type;
@@ -28,22 +42,6 @@ public class IncidentLocation {
     public boolean isSet() {
         return this.data != null && !this.data.isEmpty();
     }
-
-    static final Label COMMON_NAME = Label.of("Common Name", "OPTIONAL: The name the general public may know this place by.", TextInput.create("common-name", TextInputStyle.SHORT)
-            .setRequired(false)
-            .setMaxLength(100)
-            .setPlaceholder("Ex: Blacksburg Transit")
-            .build()
-    );
-    static final Label VENUE = Label.of("Venue",
-            "OPTIONAL: ALLOWED: " + Venue.STRING_VENUES.substring(0, Math.min(100 - "OPTIONAL: ALLOWED: ".length(), Venue.STRING_VENUES.length())),
-            TextInput.create("venue", TextInputStyle.SHORT)
-                    .setRequired(false)
-                    .setPlaceholder(Venue.TOWN_OF_BLACKSBURG.name())
-                    .setMaxLength(Arrays.stream(Venue.values()).map(Enum::name).max(Comparator.comparingInt(String::length)).stream().findFirst().orElse(" ".repeat(100)).length())
-                    .setMinLength(Arrays.stream(Venue.values()).map(Enum::name).min(Comparator.comparingInt(String::length)).stream().findFirst().orElse(" ".repeat(1)).length())
-                    .build()
-    );
 
     public String format() {
         if (!this.isSet()) {

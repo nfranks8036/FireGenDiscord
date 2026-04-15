@@ -1,8 +1,9 @@
 package net.noahf.firegen.discord.incidents.structure;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.components.Components;
 import net.dv8tion.jda.api.components.MessageTopLevelComponent;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
@@ -18,7 +19,11 @@ import net.noahf.firegen.discord.utilities.Time;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +114,12 @@ public class Incident {
     }
 
     public void setDate(LocalDate date, LocalTime time) {
+        ChronoLocalDate rightNow = ChronoLocalDate.from(LocalDateTime.now(OffsetDateTime.now().getOffset()));
+        if (date.isAfter(rightNow)) {
+            // we cannot allow future dates because you never know what incident may happen AFTER the current time
+            throw new IllegalStateException("Date and time of incident cannot be set to a future date.");
+        }
+
         this.time = time.atDate(date);
     }
 
@@ -148,10 +159,11 @@ public class Incident {
         this.agencies = agencies;
     }
 
-    public String createInteractionIdString(String command) {
+    public String createInteractionIdString(String... commands) {
+        // name of the command has to come first or this will not work
         return String.format(
                 "firegen-%s-%s",
-                this.getId(), command
+                this.getId(), String.join("-", commands)
         );
     }
 

@@ -62,13 +62,13 @@ public class CommandManager extends ListenerAdapter {
                 }
 
                 Command newInstance = (Command) constructor.newInstance();
-                if (newInstance.flags.requireMaintenance && !Main.maintenance) {
-                    // if maintenance is off but the command calls for maintenance mode, we can just ignore it and not register it
-                    // this is especially since maintenance mode cannot be toggled on in runtime, the program must be
-                    // re-executed and restarted
-                    Log.warn("Not registering /" + newInstance.name + " because the command requires maintenance mode.");
-                    continue;
-                }
+//                if (newInstance.flags.requireMaintenance && !Main.maintenance) {
+//                    // if maintenance is off but the command calls for maintenance mode, we can just ignore it and not register it
+//                    // this is especially since maintenance mode cannot be toggled on in runtime, the program must be
+//                    // re-executed and restarted
+//                    Log.warn("Not registering /" + newInstance.name + " because the command requires maintenance mode.");
+//                    continue;
+//                }
 
                 Log.info("Registered: /" + newInstance.name + " (class: " + clazz.getCanonicalName() + ")");
                 commands.add(newInstance);
@@ -137,19 +137,13 @@ public class CommandManager extends ListenerAdapter {
         Log.info(user.getName() + " (" + user.getIdLong() + "): /" + event.getFullCommandName());
         try {
 
-            if (Main.maintenance && !Main.allowedDuringMaintenance.contains(user.getIdLong())) {
-                // send maintenance status if we're in maintenance mode and the user is not allowed to use this command
-                DiscordMessages.error(event, "The Discord bot is currently in maintenance mode! Try again later.");
-                return;
-            }
+//            if (Main.maintenance && !Main.allowedDuringMaintenance.contains(user.getIdLong())) {
+//                // send maintenance status if we're in maintenance mode and the user is not allowed to use this command
+//                DiscordMessages.error(event, "The Discord bot is currently in maintenance mode! Try again later.");
+//                return;
+//            }
 
             command = this.getCommandName(event.getName());
-
-            if (command.flags.requireMaintenance && !Main.maintenance) {
-                DiscordMessages.error(event, "This command requires maintenance to be active to work.");
-                return;
-            }
-
             command.command(event);
         } catch (Exception exception) {
             // failure occurred, oh nose

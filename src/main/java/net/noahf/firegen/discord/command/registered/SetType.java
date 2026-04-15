@@ -8,17 +8,20 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.actions.registered.EditType;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.incidents.buttonaction.EditType;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
-import net.noahf.firegen.discord.utilities.Time;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents the command used to change the {@link net.noahf.firegen.discord.incidents.structure.IncidentType} of an
+ * {@link Incident}.
+ * {@code /set-type <new-type> <reason>}
+ */
 public class SetType extends Command {
 
     public SetType() {
@@ -36,7 +39,9 @@ public class SetType extends Command {
         Incident incident = EditType.editIncidents.get(event.getUser());
 
         if (incident == null) {
-            DiscordMessages.error(event, "You are not currently editing an incident. Press 'Edit Type' of the incident of your choice to edit the incident type.");
+            DiscordMessages.error(event, "You are not currently editing an incident. " +
+                    "Press 'Edit Type' of the incident of your choice to edit the incident type."
+            );
             return;
         }
 
@@ -48,7 +53,9 @@ public class SetType extends Command {
         if (typeOption == null || reasonOption == null) {
             // this realistically should not happen because the 'required' flag is set on these Options for Discord
             // but this prevents compiler warnings AND YOU CAN NEVER BE TOO SURE
-            DiscordMessages.error(event, "Expected argument 'new-type' and 'reason' to be set, found one to not be set.");
+            DiscordMessages.error(event, "Expected argument 'new-type' and 'reason' to be set, " +
+                    "found one to not be set."
+            );
             return;
         }
 

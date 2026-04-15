@@ -5,11 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.dv8tion.jda.api.components.selections.SelectOption;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.noahf.firegen.discord.command.registered.CreateIncident;
 import net.noahf.firegen.discord.incidents.structure.Agency;
 import net.noahf.firegen.discord.incidents.structure.IncidentType;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeTag;
+import net.noahf.firegen.discord.incidents.structure.location.Venue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +18,9 @@ import java.util.List;
 
 public class IncidentStructureImporter {
 
-    private static final String INCIDENT_TYPE_FILE = "incident_types.json";
-    private static final String AGENCIES_FILE = "agencies.json";
+    public static final String INCIDENT_TYPE_FILE = "incident_types.json";
+    public static final String AGENCIES_FILE = "agencies.json";
+    public static final String VENUES_FILE = "venues.json";
 
     public void importIncidentTypes(IncidentManager manager) {
         try
@@ -95,6 +95,27 @@ public class IncidentStructureImporter {
                                 .withDescription("(" + shorthand + ") " + longhand)
 //                                .withEmoji(Emoji.fromCustom(emoji, 0, false))
                 ));
+            }
+        } catch (IOException exception) {
+            throw new IllegalStateException("IOException: " + exception, exception);
+        }
+    }
+
+    public void importVenues(IncidentManager manager) {
+        try
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(VENUES_FILE))
+        {
+            if (input == null) {
+                throw new IllegalStateException("Expected file '" + VENUES_FILE + "' to exist, found none.");
+            }
+
+            JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
+            for (JsonElement element : array.asList()) {
+                JsonObject object = element.getAsJsonObject();
+                String name = object.get("name").getAsString();
+                String display = object.get("display").getAsString();
+
+                manager.venues.add(new Venue(name, display));
             }
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);

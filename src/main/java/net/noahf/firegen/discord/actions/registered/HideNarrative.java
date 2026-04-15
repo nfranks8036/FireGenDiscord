@@ -1,4 +1,4 @@
-package net.noahf.firegen.discord.incidents.buttonaction.narrative;
+package net.noahf.firegen.discord.actions.registered;
 
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.selections.SelectOption;
@@ -6,22 +6,16 @@ import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
-import net.noahf.firegen.discord.incidents.ButtonAction;
-import net.noahf.firegen.discord.incidents.StringDropdownAction;
+import net.noahf.firegen.discord.actions.ActionsContext;
+import net.noahf.firegen.discord.actions.ButtonAction;
+import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
-import net.noahf.firegen.discord.utilities.ListDiff;
-import net.noahf.firegen.discord.utilities.Log;
-import net.noahf.firegen.discord.utilities.Time;
 
-import java.io.StringReader;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Represents the "Hide" button in the Narrative row
@@ -65,15 +59,15 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      * This replies a string select menu where the user can select which narrative to hide.
      */
     @Override
-    public void execute(Incident incident, ButtonInteractionEvent event) {
-        List<IncidentNarrativeEntry> narrative = incident.getEditableNarrative();
+    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        List<IncidentNarrativeEntry> narrative = ctx.getIncident().getEditableNarrative();
         if (narrative.isEmpty()) {
             DiscordMessages.error(event, "There is no narrative text to hide.\n" +
                     "Note: You cannot remove sections of the narrative not labelled 'NARRATIVE'");
             return;
         }
 
-        ActionRow row = ActionRow.of(StringSelectMenu.create(this.callbackId(incident))
+        ActionRow row = ActionRow.of(StringSelectMenu.create(this.callbackId(ctx))
                 .addOptions(narrative.stream().map(CONVERT_TO_SELECT_OPTION).toList())
                 .setMaxValues(StringSelectMenu.OPTIONS_MAX_AMOUNT)
                 .setMinValues(0)
@@ -88,7 +82,8 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      * The event occurs after the user has selected a specific string selection option on which narrative item to hide.
      */
     @Override
-    public void execute(Incident incident, StringSelectInteractionEvent event) {
+    public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
+        Incident incident = ctx.getIncident();
 
         List<String> values = event.getValues();
         int hidden = 0, shown = 0;
@@ -135,8 +130,8 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
     }
 
     @Override
-    public void execute(Incident incident, GenericInteractionCreateEvent event) {
-        if (event instanceof  ButtonInteractionEvent e) { this.execute(incident, e); }
-        if (event instanceof  StringSelectInteractionEvent e) { this.execute(incident, e); }
+    public void execute(ActionsContext ctx, GenericInteractionCreateEvent event) {
+        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
+        if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, e); }
     }
 }

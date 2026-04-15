@@ -22,6 +22,7 @@ public class DiscordMessages {
         if (cause != null) {
             responseBuilder = responseBuilder
                     .addField("Caused by:", cause.toString(), false);
+            Log.error(event.getUser().getName() + " caused: " + message, cause);
         }
 
         if (event.isAcknowledged()) {

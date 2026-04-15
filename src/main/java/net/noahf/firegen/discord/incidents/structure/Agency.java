@@ -1,6 +1,7 @@
 package net.noahf.firegen.discord.incidents.structure;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 
 @AllArgsConstructor

@@ -1,9 +1,11 @@
 package net.noahf.firegen.discord.command.registered;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -14,7 +16,6 @@ import net.noahf.firegen.discord.incidents.structure.Agency;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
-import net.noahf.firegen.discord.utilities.Time;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,22 +23,51 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents the command used to create an incident.
+ * {@code /create-incident <type> [date] [time] [location] [agencies]}
+ */
 public class CreateIncident extends Command {
 
-    private static final String DATE_IMPORT_FORMAT = "MM/dd/yyyy";
-    private static final String TIME_IMPORT_FORMAT = "HH:mm";
+    /**
+     * Represents the {@code date} format that the user must type in order to be parsed correctly.
+     * See {@link DateTimeFormatter} for more information.
+     */
+    private static final String DATE_CREATE_FORMAT = "MM/dd/yyyy";
+
+    /**
+     * Represents the {@code time} format that the user must type in order to be parsed correct.
+     * See {@link DateTimeFormatter} for more information.
+     */
+    private static final String TIME_CREATE_FORMAT = "HH:mm";
 
     public CreateIncident() {
         super("create-incident", "Creates an incident to put in radio activity.",
                 CommandFlags.include()
                         .options(new OptionData[]{
-                                new OptionData(OptionType.STRING, "type", "REQUIRED: The type of incident.", true, true),
-                                new OptionData(OptionType.STRING, "time", "The time (" + TIME_IMPORT_FORMAT +") of the incident, will default to today if no 'date' field is set.", false, false),
-                                new OptionData(OptionType.STRING, "date", "The date (" + DATE_IMPORT_FORMAT + ") of the incident, MUST set a 'time' field if this field is set.", false, false),
-                                new OptionData(OptionType.STRING, "location", "The location of the incident.", false, false),
-                                new OptionData(OptionType.STRING, "agencies", "Any agencies attached, separated with a comma.", false, true)
+                                new OptionData(OptionType.STRING, "type",
+                                        "REQUIRED: The type of incident.",
+                                        true, true
+                                ),
+                                new OptionData(OptionType.STRING, "time",
+                                        "The time (" + TIME_CREATE_FORMAT +") of the incident, will default" +
+                                                " to today if no 'date' field is set.",
+                                        false, false
+                                ),
+                                new OptionData(OptionType.STRING, "date",
+                                        "The date (" + DATE_CREATE_FORMAT + ") of the incident, MUST set " +
+                                                "a 'time' field if this field is set.",
+                                        false, false
+                                ),
+                                new OptionData(OptionType.STRING, "location",
+                                        "The location of the incident.",
+                                        false, false
+                                ),
+                                new OptionData(OptionType.STRING, "agencies",
+                                        "Any agencies attached, separated with a comma.",
+                                        false, true
+                                )
                         })
                         .finish()
         );
@@ -70,7 +100,7 @@ public class CreateIncident extends Command {
             List<Agency> agencies = new ArrayList<>();
             for (String agencyString : agenciesList) {
                 // required syntax of command is the shorthand. e.g., "BFD,BVRS,SUP5,BPD,VTPD"
-                Agency a = Main.incidents.getAgencyByShorthand(agencyString);
+                Agency a = Main.incidents.getAgencyBy(agencyString);
                 if (a == null) continue;
 
                 agencies.add(a);
@@ -87,9 +117,12 @@ public class CreateIncident extends Command {
 
             String timeString = timeOption.getAsString();
             try {
-                time = LocalTime.parse(timeString, DateTimeFormatter.ofPattern(TIME_IMPORT_FORMAT));
+                time = LocalTime.parse(timeString, DateTimeFormatter.ofPattern(TIME_CREATE_FORMAT));
             } catch (DateTimeParseException e) {
-                DiscordMessages.error(event, "Failed to parse your time, expected format '" + TIME_IMPORT_FORMAT + "', got '" + timeString + "'", e);
+                DiscordMessages.error(event,
+                        "Failed to parse your time, expected format '" + TIME_CREATE_FORMAT + "', " +
+                                "got '" + timeString + "'", e
+                );
                 return;
             }
 
@@ -103,9 +136,11 @@ public class CreateIncident extends Command {
 
             String dateString = dateOption.getAsString();
             try {
-                date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DATE_IMPORT_FORMAT));
+                date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DATE_CREATE_FORMAT));
             } catch (DateTimeParseException e) {
-                DiscordMessages.error(event, "Failed to parse your date, expected format '" + DATE_IMPORT_FORMAT + "', got '" + dateString + "'", e);
+                DiscordMessages.error(event, "Failed to parse your date, expected format '" +
+                        DATE_CREATE_FORMAT + "', got '" + dateString + "'", e
+                );
                 return;
             }
         }

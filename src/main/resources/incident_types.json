@@ -32,6 +32,7 @@
     {"name": "FIGHT", "tag": "POLICE_WITH_WEAPON"},
     {"name": "ROBBERY", "tag": "POLICE_WITH_WEAPON"},
     {"name": "BURGLARY", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "BREAKING & ENTERING", "tag": "POLICE_WITH_WEAPON"},
     {"name": "LARCENY", "tag": "POLICE_WITH_WEAPON"},
     {"name": "SHOPLIFTING", "tag": "POLICE_WITH_WEAPON"},
     {"name": "VANDALISM", "tag": "POLICE_WITH_WEAPON"},

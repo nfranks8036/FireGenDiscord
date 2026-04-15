@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
         builderMethodName = "include",
         buildMethodName = "finish"
 )
-/**
+/*
  * Additional command flags to change the behavior of how the command is registered with Discord
  */
 public class CommandFlags {
@@ -39,10 +39,10 @@ public class CommandFlags {
      */
     public final DefaultMemberPermissions permissions;
 
-    /**
-     * If the command can only be accessed while maintenance mode is active, {@code true} means the command will only
-     * work if maintenance mode is active
-     */
-    public final boolean requireMaintenance;
+//    /**
+//     * If the command can only be accessed while maintenance mode is active, {@code true} means the command will only
+//     * work if maintenance mode is active
+//     */
+//    public final boolean requireMaintenance;
 
 }

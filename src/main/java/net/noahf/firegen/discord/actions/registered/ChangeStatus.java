@@ -1,24 +1,36 @@
-package net.noahf.firegen.discord.incidents.buttonaction;
+package net.noahf.firegen.discord.actions.registered;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.noahf.firegen.discord.incidents.ButtonAction;
+import net.noahf.firegen.discord.actions.ActionsContext;
+import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.incidents.structure.Incident;
 import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
 import net.noahf.firegen.discord.incidents.structure.IncidentStatus;
-import net.noahf.firegen.discord.utilities.Time;
+import net.noahf.firegen.discord.utilities.DiscordMessages;
 
-import java.util.concurrent.TimeUnit;
-
+/**
+ * Represents the "Close Incident" or "Re-open Incident" buttons in the Status row.
+ */
 public class ChangeStatus implements ButtonAction {
 
+    /**
+     * The name of the command needed to access this class
+     */
     @Override
     public String getName() {
         return "status";
     }
 
+    /**
+     * The event that occurrs after pressing the 'Close Incident' or 'Re-open Incident'
+     * buttons. This flip-flops the status of the incident from
+     * {@link IncidentStatus#CLOSED CLOSED} to either {@link IncidentStatus#PENDING PENDING} or
+     * {@link IncidentStatus#ACTIVE ACTIVE} and vice versa
+     */
     @Override
-    public void execute(Incident incident, ButtonInteractionEvent event) {
-        IncidentStatus oldStatus = incident.getStatus();
+    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        Incident incident = ctx.getIncident();
+
         incident.setStatus(incident.getStatus().opposite(incident));
         IncidentStatus newStatus = incident.getStatus();
 
@@ -31,9 +43,9 @@ public class ChangeStatus implements ButtonAction {
             }
         }
 
-        event.deferReply().setEphemeral(true).complete().deleteOriginal().queue();
-        incident.addContributor(event.getUser().getName());
+        DiscordMessages.noMessage(event);
 
+        incident.addContributor(event.getUser().getName());
         incident.postUpdate();
     }
 

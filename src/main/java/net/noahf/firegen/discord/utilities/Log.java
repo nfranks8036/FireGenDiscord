@@ -1,9 +1,5 @@
 package net.noahf.firegen.discord.utilities;
 
-import net.noahf.firegen.discord.Main;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static net.noahf.firegen.discord.Main.LOGGER;
 
 public class Log {
