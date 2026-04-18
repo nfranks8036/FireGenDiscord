@@ -11,6 +11,7 @@ import static net.noahf.firegen.discord.incidents.structure.location.Venue.*;
 
 public enum LocationType {
     ADDRESS(
+            "Location",
             "A numeric address. Requires: Street address, including numerics. Allows: Common name, venue.",
             Label.of("Address Numerics", "The numbers representing the address.", TextInput.create("address-numerics", TextInputStyle.SHORT)
                     .setRequired(true)
@@ -30,6 +31,7 @@ public enum LocationType {
             COMMON_NAME_COMPONENT
     ),
     MILE_MARKER(
+            "Location",
             "A mile-marker or landmark on a road. Requires: Mile marker/landmark, road name. Allows: Venue.",
             Label.of("Road Name", "The road the call is on. Use 'US-' for US routes and 'I-' for interstates. Add direction of travel.", TextInput.create("milemarker-roadname", TextInputStyle.SHORT)
                     .setRequired(true)
@@ -47,6 +49,7 @@ public enum LocationType {
             VENUE_COMPONENT
     ),
     LATITUDE_LONGITUDE(
+            "Location",
             "A latitude and longitude. Requires: Two float values. Allows: Additional information, venue.",
             Label.of("Latitude", "The latitude, in *DECIMAL DEGREES*, of the incident.", TextInput.create("latitudelongitude-latitude", TextInputStyle.SHORT)
                     .setRequired(true)
@@ -67,6 +70,7 @@ public enum LocationType {
             VENUE_COMPONENT
     ),
     INTERSECTION(
+            "Location",
             "An intersection of two roads. Requires: Two or more roads. Allows: Multiple roads.",
             Label.of("Intersection: Road #1", "The first road in the intersection.", TextInput.create("intersection-road1", TextInputStyle.SHORT)
                     .setRequired(true)
@@ -94,6 +98,7 @@ public enum LocationType {
             )
     ),
     CROSS_STREETS(
+            "Cross-streets",
             "Two cross-streets for generic locations. Requires: At least one road. Allows: Multiple roads.",
             Label.of("Cross-street: Road #1", "The primary road in the cross-streets.", TextInput.create("crossstreets-road1", TextInputStyle.SHORT)
                     .setRequired(true)
@@ -121,6 +126,7 @@ public enum LocationType {
             )
     ),
     CUSTOM(
+            "Location",
             "Custom text to describe the location if none of the above fit.",
             Label.of("Custom Text", "Enter the custom location type in this box.", TextInput.create("custom-custom", TextInputStyle.PARAGRAPH)
                     .setRequired(true)
@@ -129,16 +135,18 @@ public enum LocationType {
             )
     );
 
+    private final @Getter String title;
     private final @Getter String description;
     private final Component[] components;
 
-    LocationType(String description, Component... components) {
+    LocationType(String locationTitle, String description, Component... components) {
+        this.title = locationTitle;
         this.description = description;
         this.components = components;
     }
 
     public String displayName() {
-        return this.name().toUpperCase().replace(" ", "_");
+        return this.name().toUpperCase().replace("_", " ");
     }
 
     public Label[] getLabels(Incident incident) {

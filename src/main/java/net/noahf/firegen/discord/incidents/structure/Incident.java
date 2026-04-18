@@ -33,6 +33,9 @@ import java.util.StringJoiner;
 @RequiredArgsConstructor
 public class Incident {
 
+    private static final String INCIDENT_TIME_FORMAT = "HH:mm";
+    private static final String INCIDENT_DATE_FORMAT = "MM/dd/yyyy";
+
     private final IncidentManager manager;
     @Getter private final long id;
 
@@ -228,7 +231,10 @@ public class Incident {
         for (Message message : this.receivingMessages) {
             Log.info("Updating incident " + this.getFormattedId() + " (" + this.getType().getCompleteName()
                     + ") message in #" + message.getChannel().getName() + " in " + message.getGuild().getName() + "...");
-            message.editMessage(fullMessage).queue();
+            message.editMessage(fullMessage).queue(null, (t) -> {
+                Log.warn("Message does not exist. Removing from the list (possibly deleted by staff).", t);
+                this.receivingMessages.remove(message);
+            });
         }
 
         // edit the admin messages with an updated admin panel
@@ -245,7 +251,12 @@ public class Incident {
                 )).queue();
             }
 
-            message.editMessageEmbeds(adminMsg).queue();
+            message.editMessageEmbeds(adminMsg).queue(null, (t) -> {
+                Log.warn("Admin message in #" + message.getChannel().getName() + " in " +
+                        message.getGuild().getName() + " does not exist. Removing from the list " +
+                        "(possibly deleted by staff).", t);
+                this.adminMessages.remove(message);
+            });
         }
     }
 
@@ -254,15 +265,18 @@ public class Incident {
         return String.format(
                 """
                         # %s %s
-                        [<t:%d:d>@<t:%d:t> // <t:%d:R>]
+                        [`%s` @ `%s` // <t:%d:R>]
                         
                         **Responding:** %s
-                        **Location:** %s""" +
+                        **%s:** %s""" +
                         (!narrative.isEmpty() ? "\n\n**Narrative:**\n%s" : ""),
                 this.status.getEmoji(),
                 this.type.getCompleteName(),
-                getUnix(), getUnix(), getUnix(),
+                this.getTime().format(DateTimeFormatter.ofPattern(INCIDENT_DATE_FORMAT)),
+                this.getTime().format(DateTimeFormatter.ofPattern(INCIDENT_TIME_FORMAT)),
+                getUnix(),
                 String.join(", ", this.agencies.stream().map(Agency::getFormatted).toList()),
+                this.location.getType().getTitle(),
                 this.location.format(),
                 !narrative.isEmpty() ? String.join("\n", narrative) : "None"
         );
@@ -271,19 +285,23 @@ public class Incident {
     public MessageEmbed formatAdmin() {
         List<String> narrative = this.formatNarrative(true);
 
-        StringJoiner respondingAgencies = new StringJoiner("\n");
+        StringJoiner respondingAgenciesJoiner = new StringJoiner("\n");
         int index = 0;
         for (Agency agency : this.agencies) {
-            respondingAgencies.add("- **" + agency.getLonghand().toUpperCase() + "**");
-            respondingAgencies.add((index == 0 ? "  " : "") + "  - " +
+            respondingAgenciesJoiner.add("- **" + agency.getLonghand().toUpperCase() + "**");
+            respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
                     "(shorthand `" + agency.getShorthand() + "`, formatted `" + agency.getFormatted() + "`, emoji " + agency.getEmoji() + ")"
                     );
             index++;
         }
+        String respondingAgencies = respondingAgenciesJoiner.toString().isBlank() ? "None"
+                :  respondingAgenciesJoiner.toString().substring(
+                0, Math.min(1024, respondingAgenciesJoiner.toString().length())
+        );
         return new EmbedBuilder()
                         .setTitle("ADMIN OVERVIEW")
                         .setDescription("Incident `" + this.getFormattedId() + "`"
-                                + "\nStatus: " + this.status.getEmoji() + " " + this.status.name()
+                                + "\nStatus: " + this.status.getEmoji() + " " + this.status.name().replace("_", " ")
                                 + "\nMessages (" + this.receivingMessages.size() + "): " + String.join(" , ", this.receivingMessages.stream().map(msg ->
                                     "https://discord.com/channels/" + msg.getGuild().getId() + "/" + msg.getChannel().getId() + "/" + msg.getId()
                                 ).toList())
@@ -311,15 +329,28 @@ public class Incident {
                                 ,
                                 false
                                 )
-                        .addField("Responding Agencies",
-                                respondingAgencies.toString().isBlank() ? "None" : respondingAgencies.toString(), false
-                                )
+                        .addField("Responding Agencies (" + this.agencies.size() + ")", respondingAgencies, false)
                         .addField("Narrative",
                                 !narrative.isEmpty() ? String.join("\n", narrative) : "None",
                                 false
                                 )
                         .setColor(new Color(255, 94, 94))
                 .build();
+    }
+
+
+
+    public void admin_wipeMessages() {
+        for (Message message : this.receivingMessages) {
+            message.delete().queue(null, (t) -> Log.warn("Couldn't delete in #" + message.getChannel().getName()));
+        }
+
+        for (Message message : this.adminMessages) {
+            message.delete().queue(null, (t) -> Log.warn("Couldn't delete in #" + message.getChannel().getName()));
+        }
+
+        this.receivingMessages.clear();
+        this.adminMessages.clear();
     }
 
 }

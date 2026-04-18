@@ -5,9 +5,12 @@ import lombok.Setter;
 import net.noahf.firegen.discord.utilities.Time;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 public class IncidentNarrativeEntry {
+
+    private static final String NARRATIVE_TIME_FORMAT = "HH:mm";
 
     private final @Getter long id;
     private final @Getter LocalDateTime time;
@@ -20,7 +23,11 @@ public class IncidentNarrativeEntry {
         this.id = new Random(System.currentTimeMillis()).nextLong(1000000, 9999999);
         this.time = time;
         this.userId = userId;
-        this.entry = entry.toUpperCase().strip().replace("\n", "");
+        this.entry = entry.toUpperCase()
+                .strip()
+                .replace("\n", "") // don't allow newLine characters
+                .replace("*", "\\*") // remove Discord formatting involving *
+                .replace("_", "\\_"); // remove Discord formatting involving _
         this.type = type;
     }
 
@@ -34,7 +41,7 @@ public class IncidentNarrativeEntry {
     }
 
     public String formatReceiver() {
-        return "<t:" + Time.getUnix(this.time) + ":t> | " + entry;
+        return "`" + this.time.format(DateTimeFormatter.ofPattern(NARRATIVE_TIME_FORMAT)) + "` " + entry;
     }
 
     public String formatAdmin() {
