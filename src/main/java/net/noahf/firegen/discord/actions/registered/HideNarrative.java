@@ -9,8 +9,8 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
-import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.time.format.DateTimeFormatter;
@@ -30,10 +30,10 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
             DateTimeFormatter.ofPattern("MMM d, yyyy @ HH:mm:ss");
 
     /**
-     * The {@link Function} used to convert the {@link IncidentNarrativeEntry} into a JDA {@link SelectOption}.
+     * The {@link Function} used to convert the {@link IncidentLogEntryImpl} into a JDA {@link SelectOption}.
      * This function is used every time that the string select option menu is created.
      */
-    private static final Function<IncidentNarrativeEntry, SelectOption> CONVERT_TO_SELECT_OPTION =
+    private static final Function<IncidentLogEntryImpl, SelectOption> CONVERT_TO_SELECT_OPTION =
             (entry) ->
                     SelectOption.of(entry.getTime().format(DATE_TIME_NARRATIVE_FORMAT), String.valueOf(entry.getId()))
                             .withDescription(
@@ -44,7 +44,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
                                             Math.min(SelectOption.DESCRIPTION_MAX_LENGTH, entry.getEntry().length())
                                     )
                             )
-                            .withDefault(entry.getType() == IncidentNarrativeEntry.EntryType.HIDDEN);
+                            .withDefault(entry.getType() == IncidentLogEntryImpl.EntryType.HIDDEN);
 
     /**
      * The name of the command needed to access this class
@@ -60,7 +60,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
-        List<IncidentNarrativeEntry> narrative = ctx.getIncident().getEditableNarrative();
+        List<IncidentLogEntryImpl> narrative = ctx.getIncident().getEditableNarrative();
         if (narrative.isEmpty()) {
             DiscordMessages.error(event, "There is no narrative text to hide.\n" +
                     "Note: You cannot remove sections of the narrative not labelled 'NARRATIVE'");
@@ -83,29 +83,29 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
-        Incident incident = ctx.getIncident();
+        IncidentImpl incident = ctx.getIncident();
 
         List<String> values = event.getValues();
         int hidden = 0, shown = 0;
-        for (IncidentNarrativeEntry entry : incident.getEditableNarrative()) {
+        for (IncidentLogEntryImpl entry : incident.getEditableNarrative()) {
             boolean unconfirmedChanges = false;
-            IncidentNarrativeEntry.EntryType type = entry.getType();
+            IncidentLogEntryImpl.EntryType type = entry.getType();
 
             if (
-                    type == IncidentNarrativeEntry.EntryType.NARRATIVE &&
+                    type == IncidentLogEntryImpl.EntryType.NARRATIVE &&
                     values.contains(String.valueOf(entry.getId()))) {
                 // this means that the user has requested this entry to be hidden but it's currently viewable
 
                 hidden++; unconfirmedChanges = true;
-                entry.setType(IncidentNarrativeEntry.EntryType.HIDDEN);
+                entry.setType(IncidentLogEntryImpl.EntryType.HIDDEN);
 
             } else if (
-                    type == IncidentNarrativeEntry.EntryType.HIDDEN &&
+                    type == IncidentLogEntryImpl.EntryType.HIDDEN &&
                     !values.contains(String.valueOf(entry.getId()))) {
                 // this means that the user has requested to show this entry but it's currently hidden
 
                 shown++; unconfirmedChanges = true;
-                entry.setType(IncidentNarrativeEntry.EntryType.NARRATIVE);
+                entry.setType(IncidentLogEntryImpl.EntryType.NARRATIVE);
 
             }
 

@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.incidents.structure.Incident;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 public class AdminCommand extends Command {
@@ -46,7 +46,7 @@ public class AdminCommand extends Command {
                     return;
                 }
 
-                Incident incident = Main.incidents.getIncidentBy(Long.parseLong(parameter));
+                IncidentImpl incident = Main.incidents.getIncidentBy(Long.parseLong(parameter));
                 if (incident == null) {
                     DiscordMessages.error(event, "Invalid parameter.");
                     return;

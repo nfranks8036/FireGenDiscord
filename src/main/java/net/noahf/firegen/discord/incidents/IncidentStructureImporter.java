@@ -5,9 +5,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.dv8tion.jda.api.components.selections.SelectOption;
-import net.noahf.firegen.discord.incidents.structure.Agency;
-import net.noahf.firegen.discord.incidents.structure.IncidentType;
-import net.noahf.firegen.discord.incidents.structure.IncidentTypeTag;
+import net.noahf.firegen.api.incidents.IncidentType;
+import net.noahf.firegen.api.incidents.IncidentTypeTag;
+import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.location.Venue;
 
 import java.io.IOException;
@@ -18,22 +21,18 @@ import java.util.List;
 
 public class IncidentStructureImporter {
 
-    public static final String INCIDENT_TYPE_FILE = "incident_types.json";
-    public static final String AGENCIES_FILE = "agencies.json";
-    public static final String VENUES_FILE = "venues.json";
-
-    public void importIncidentTypes(IncidentManager manager) {
+    public void importIncidentTypes(FireGenVariables vars, IncidentManager manager) {
         try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(INCIDENT_TYPE_FILE))
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(vars.incidentTypesFile()))
         {
             if (input == null) {
-                throw new IllegalStateException("Expected file '" + INCIDENT_TYPE_FILE + "' to exist, found none.");
+                throw new IllegalStateException("Expected file '" + vars.incidentTypesFile() + "' to exist, found none.");
             }
             JsonObject object = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonObject();
-            List<IncidentTypeTag> tags = new ArrayList<>();
-            IncidentTypeTag newTag = null;
+            List<IncidentTypeTagImpl> tags = new ArrayList<>();
+            IncidentTypeTagImpl newTag = null;
             for (JsonElement element : object.getAsJsonArray("tags").asList()) {
-                IncidentTypeTag tag = new IncidentTypeTag(element.getAsJsonObject());
+                IncidentTypeTagImpl tag = new IncidentTypeTagImpl(element.getAsJsonObject());
                 tags.add(tag);
                 if (tag.name.equalsIgnoreCase("NEW_INCIDENT")) {
                     newTag = tag;
@@ -52,15 +51,15 @@ public class IncidentStructureImporter {
                     throw new IllegalStateException("Expected type '" + name + "' to have an associated 'tag'");
                 }
                 List<IncidentType> types = new ArrayList<>();
-                if (manager.newIncidentType == null && tagStr.equalsIgnoreCase("NEW_INCIDENT")) {
-                    manager.newIncidentType = new IncidentType(name, tag, 0);
-                    types.add(manager.newIncidentType);
+                if (tagStr.equalsIgnoreCase("NEW_INCIDENT")) {
+                    vars.defaultType(new IncidentTypeImpl(name, tag, 0));
+                    types.add(vars.defaultType());
                 } else if (tag.getQualifier() == null) {
-                    types.add(new IncidentType(name, tag, 0));
+                    types.add(new IncidentTypeImpl(name, tag, 0));
                 } else {
                     List<String> stringTags = tag.fromType(name);
                     for (int i = 0; i < stringTags.size(); i++) {
-                        types.add(new IncidentType(name, tag, i));
+                        types.add(new IncidentTypeImpl(name, tag, i));
                     }
                 }
 
@@ -89,7 +88,7 @@ public class IncidentStructureImporter {
                 String format = object.get("format").getAsString();
                 String emoji = object.get("emoji").getAsString();
 
-                manager.agencies.add(new Agency(
+                manager.agencies.add(new AgencyImpl(
                         shorthand, longhand, format, emoji,
                         SelectOption.of(format, shorthand)
                                 .withDescription("(" + shorthand + ") " + longhand)

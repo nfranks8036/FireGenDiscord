@@ -9,9 +9,9 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
-import net.noahf.firegen.discord.incidents.structure.Agency;
-import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
+import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.ListDiff;
 
@@ -42,12 +42,12 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
                 .setEphemeral(true)
                 .setComponents(ActionRow.of(StringSelectMenu.create(this.callbackId(ctx))
                         .addOptions(Main.incidents.getAgencies().stream()
-                                .map(Agency::getSelectOption)
+                                .map(AgencyImpl::getSelectOption)
                                 .limit(StringSelectMenu.OPTIONS_MAX_AMOUNT)
                                 .toList()
                         )
                         .setDefaultOptions(
-                                ctx.getIncident().getAgencies().stream().map(Agency::getSelectOption).toList()
+                                ctx.getIncident().getAgencies().stream().map(AgencyImpl::getSelectOption).toList()
                         )
                         .setRequired(true)
                         // the max amount of value IS the amount of values we have available.
@@ -63,14 +63,14 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
-        Incident incident = ctx.getIncident();
+        IncidentImpl incident = ctx.getIncident();
 
         // we create a new (empty) list entitled agencies that has the new list of all agencies that are selected
         // due to the fact the default values are already set in the event listed above, then we can expect that
         // selected options will only be ones that the user wants attached. therefore we can just assume the
         // list of values are up-to-date and accurate.
-        List<Agency> agencies = new ArrayList<>();
-        for (Agency agency : Main.incidents.getAgencies()) {
+        List<AgencyImpl> agencies = new ArrayList<>();
+        for (AgencyImpl agency : Main.incidents.getAgencies()) {
             if (!event.getValues().contains(agency.getShorthand())) {
                 continue;
             }
@@ -78,12 +78,12 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
         }
 
         // ListDiff will find out which agencies were added and which agencies were removed
-        ListDiff<Agency> diff = ListDiff.compare(incident.getAgencies(), agencies);
+        ListDiff<AgencyImpl> diff = ListDiff.compare(incident.getAgencies(), agencies);
 
         StringJoiner narrative = new StringJoiner(" and ");
         if (!diff.getAdded().isEmpty()) {
             narrative.add("Added agencies " +
-                    String.join(", ", diff.getAdded().stream().map(Agency::getShorthand).toList())
+                    String.join(", ", diff.getAdded().stream().map(AgencyImpl::getShorthand).toList())
             );
         }
         if (!diff.getRemoved().isEmpty()) {
@@ -91,7 +91,7 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
                     // to keep consistent capitalization. if 'getAdded' is empty, then this section will be shown first.
                     (diff.getAdded().isEmpty() ? "R" : "r") + "emoved" +
                             " agencies " +
-                            String.join(", ", diff.getRemoved().stream().map(Agency::getShorthand).toList())
+                            String.join(", ", diff.getRemoved().stream().map(AgencyImpl::getShorthand).toList())
             );
         }
 
@@ -100,7 +100,7 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
         DiscordMessages.selfDestructEdit(event, 5, narrative.toString());
 
         incident.addContributor(event.getUser().getName());
-        incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.UPDATE, narrative.toString());
+        incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.UPDATE, narrative.toString());
         incident.postUpdate();
     }
 

@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.components.Component;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.noahf.firegen.discord.incidents.structure.Incident;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 
 import static net.noahf.firegen.discord.incidents.structure.location.Venue.*;
 
@@ -149,7 +149,7 @@ public enum LocationType {
         return this.name().toUpperCase().replace("_", " ");
     }
 
-    public Label[] getLabels(Incident incident) {
+    public Label[] getLabels(IncidentImpl incident) {
         Label[] labels = new Label[this.components.length];
         for (int i = 0; i < labels.length; i++) {
             Component component = this.components[i];

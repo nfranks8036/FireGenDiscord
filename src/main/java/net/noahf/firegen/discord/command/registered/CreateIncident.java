@@ -1,19 +1,17 @@
 package net.noahf.firegen.discord.command.registered;
 
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
-import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.incidents.structure.Agency;
-import net.noahf.firegen.discord.incidents.structure.Incident;
+import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
@@ -75,7 +73,7 @@ public class CreateIncident extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
-        Incident incident = Main.incidents.createNewIncident();
+        IncidentImpl incident = Main.incidents.createNewIncident();
 
         // ---------- incident type ----------
         OptionMapping typeOption = event.getOption("type");
@@ -97,10 +95,10 @@ public class CreateIncident extends Command {
 
             String[] agenciesList = agenciesString.split(",");
 
-            List<Agency> agencies = new ArrayList<>();
+            List<AgencyImpl> agencies = new ArrayList<>();
             for (String agencyString : agenciesList) {
                 // required syntax of command is the shorthand. e.g., "BFD,BVRS,SUP5,BPD,VTPD"
-                Agency a = Main.incidents.getAgencyBy(agencyString);
+                AgencyImpl a = Main.incidents.getAgencyBy(agencyString);
                 if (a == null) continue;
 
                 agencies.add(a);
@@ -173,7 +171,7 @@ public class CreateIncident extends Command {
                 String input = event.getFocusedOption().getValue().replaceAll("\\s+", "");
 
                 // the input for the agencies field will only take in the shorthands (e.g., 'SUP5' not 'Supervisor 5')
-                List<String> allAgencies = Main.incidents.getAgencies().stream().map(Agency::getShorthand).toList();
+                List<String> allAgencies = Main.incidents.getAgencies().stream().map(AgencyImpl::getShorthand).toList();
 
                 String[] parts = input.split(",");
                 List<String> selected = new ArrayList<>();

@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.managers.Presence;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.actions.ActionsManager;
 import net.noahf.firegen.discord.actions.listeners.ButtonDetector;
 import net.noahf.firegen.discord.actions.listeners.ModalDetector;
@@ -71,7 +72,10 @@ public class Main {
 
         loadChannels(JDA);
 
-        incidents = new IncidentManager();
+        FireGenVariables vars = new FireGenVariables();
+        vars.resetToDefault();
+
+        incidents = new IncidentManager(vars);
         actions = new ActionsManager();
         commands = new CommandManager();
 

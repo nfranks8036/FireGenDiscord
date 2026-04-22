@@ -11,8 +11,8 @@ import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
-import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 /**
@@ -60,7 +60,7 @@ public class AddNarrative implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
-        Incident incident = ctx.getIncident();
+        IncidentImpl incident = ctx.getIncident();
 
         ModalMapping textMapping = event.getValue("text");
         if (textMapping == null) {
@@ -68,7 +68,7 @@ public class AddNarrative implements ButtonAction, ModalAction {
             return;
         }
 
-        incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.NARRATIVE, textMapping.getAsString());
+        incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.NARRATIVE, textMapping.getAsString());
 
         DiscordMessages.noMessage(event);
         incident.addContributor(event.getUser().getName());

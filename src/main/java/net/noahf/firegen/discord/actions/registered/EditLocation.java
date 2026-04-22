@@ -13,8 +13,8 @@ import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
-import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
 import net.noahf.firegen.discord.incidents.structure.location.LocationType;
 import net.noahf.firegen.discord.incidents.structure.location.Venue;
@@ -98,7 +98,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
-        Incident incident = ctx.getIncident();
+        IncidentImpl incident = ctx.getIncident();
         LocationType type = LocationType.valueOf(ctx.getParameters().get(0));
 
         // ------- [ GET VENUE IF SET ] --------
@@ -121,7 +121,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         DiscordMessages.selfDestructEdit(event, 5, "The location for this incident was updated to `" + location.format() + "`");
 
         incident.addContributor(event.getUser().getName());
-        incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.UPDATE, narrative);
+        incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.UPDATE, narrative);
         incident.postUpdate();
     }
 

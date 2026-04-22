@@ -2,12 +2,14 @@ package net.noahf.firegen.discord.incidents.structure;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.noahf.firegen.api.incidents.IncidentType;
+import net.noahf.firegen.api.incidents.IncidentTypeTag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
 @RequiredArgsConstructor
-public class IncidentType {
+public class IncidentTypeImpl implements IncidentType {
 
     private @NotNull @Getter String type;
     private @NotNull @Getter IncidentTypeTag tag;

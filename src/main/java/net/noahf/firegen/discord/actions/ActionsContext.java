@@ -3,7 +3,7 @@ package net.noahf.firegen.discord.actions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.noahf.firegen.discord.incidents.IncidentManager;
-import net.noahf.firegen.discord.incidents.structure.Incident;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 
 import java.util.List;
 
@@ -25,10 +25,10 @@ public class ActionsContext {
     private @Getter IncidentManager manager;
 
     /**
-     * Represents the current {@link Incident} that an action is being applied to.
+     * Represents the current {@link IncidentImpl} that an action is being applied to.
      * @see ActionsContext
      */
-    private @Getter Incident incident;
+    private @Getter IncidentImpl incident;
 
     /**
      * Represents the current {@link String command} that is being executed. This is usually provided in the class by

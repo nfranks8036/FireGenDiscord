@@ -19,6 +19,8 @@ dependencies {
     implementation 'org.reflections:reflections:0.10.2' // used to register commands reflectively
     implementation 'com.google.code.gson:gson:2.13.2' // gson for reading incident types
 
+    implementation project(":FireGenAPI")
+
     // lombok used to simplify boiler-plate
     compileOnly("org.projectlombok:lombok:1.18.44")
     annotationProcessor("org.projectlombok:lombok:1.18.44")

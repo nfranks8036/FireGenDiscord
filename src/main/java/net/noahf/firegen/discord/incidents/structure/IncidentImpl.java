@@ -11,11 +11,11 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.*;
+import net.noahf.firegen.api.incidents.location.IncidentLocation;
+import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.discord.incidents.IncidentManager;
-import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
-import net.noahf.firegen.discord.utilities.Log;
-import net.noahf.firegen.discord.utilities.Time;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -31,31 +31,28 @@ import java.util.Random;
 import java.util.StringJoiner;
 
 @RequiredArgsConstructor
-public class Incident {
-
-    private static final String INCIDENT_TIME_FORMAT = "HH:mm";
-    private static final String INCIDENT_DATE_FORMAT = "MM/dd/yyyy";
+public class IncidentImpl implements Incident {
 
     private final IncidentManager manager;
-    @Getter private final long id;
+    private @Getter final long id;
 
     private @Getter @Setter IncidentStatus status;
 
     private @Getter @NotNull IncidentType type;
     private @Getter @NotNull List<Agency> agencies;
     private @Getter @Setter @NotNull IncidentLocation location;
-    private @Getter @NotNull LocalDateTime time;
+    private @Getter @NotNull IncidentTime time;
 
-    private final @Getter List<IncidentNarrativeEntry> narrative;
+    private final @Getter List<IncidentLogEntry> narrative;
 
     private final List<Message> receivingMessages;
     private final List<Message> adminMessages;
 
-    private final List<String> contributors;
+    private final List<Contributor> contributors;
 
     private final List<MessageTopLevelComponent> adminComponents;
 
-    public Incident(IncidentManager manager) {
+    public IncidentImpl(IncidentManager manager) {
         this.manager = manager;
         this.id = new Random(System.currentTimeMillis()).nextLong(1000000, 9999999);
         this.status = IncidentStatus.PENDING;
@@ -95,10 +92,10 @@ public class Incident {
     }
 
     public void setType(String type) {
-        IncidentType newType          = manager.getTypeFromString(type);
+        IncidentTypeImpl newType          = manager.getTypeFromString(type);
         if (type.startsWith("custom:")) {
             type = type.substring("custom:".length()).toUpperCase();
-            newType = new IncidentType(type, IncidentTypeTag.DEFAULT, 0);
+            newType = new IncidentTypeImpl(type, IncidentTypeTagImpl.DEFAULT, 0);
         }
 
         if (newType == null) {
@@ -133,17 +130,17 @@ public class Incident {
         this.contributors.add(contributor);
     }
 
-    public void addNarrative(User user, IncidentNarrativeEntry.EntryType type, String narrative) {
-        this.narrative.add(new IncidentNarrativeEntry(LocalDateTime.now(), user.getIdLong(), narrative, type));
+    public void addNarrative(User user, IncidentLogEntryImpl.EntryType type, String narrative) {
+        this.narrative.add(new IncidentLogEntryImpl(LocalDateTime.now(), user.getIdLong(), narrative, type));
     }
 
-    public List<IncidentNarrativeEntry> getEditableNarrative() {
+    public List<IncidentLogEntryImpl> getEditableNarrative() {
         return this.narrative.stream().filter(ine -> ine.getType().isEditable()).toList();
     }
 
-    public void injectNarrative(IncidentNarrativeEntry entry) {
+    public void injectNarrative(IncidentLogEntryImpl entry) {
         for (int i = 0; i < this.narrative.size(); i++) {
-            IncidentNarrativeEntry element = this.narrative.get(i);
+            IncidentLogEntryImpl element = this.narrative.get(i);
             if (element.getId() != entry.getId()) {
                 continue;
             }
@@ -153,7 +150,7 @@ public class Incident {
         throw new IllegalStateException("Narrative with ID '" + entry.getId() + "' does not exist in the incident with ID '" + this.getFormattedId() + "'");
     }
 
-    public void setAgencies(List<Agency> agencies) {
+    public void setAgencies(List<AgencyImpl> agencies) {
         if (agencies.isEmpty()) {
             this.status =  IncidentStatus.PENDING;
         } else {
@@ -176,8 +173,8 @@ public class Incident {
         }
 
         List<String> response = new ArrayList<>();
-        for (IncidentNarrativeEntry entry : this.narrative) {
-            if (!admin && entry.getType() != IncidentNarrativeEntry.EntryType.NARRATIVE) {
+        for (IncidentLogEntryImpl entry : this.narrative) {
+            if (!admin && entry.getType() != IncidentLogEntryImpl.EntryType.NARRATIVE) {
                 // we don't want admin update logs to be included in the narrative for the public necessarily
                 continue;
             }
@@ -206,7 +203,7 @@ public class Incident {
                 startingMessage = startingMessage + "\nWhere- " + this.location.format();
             }
             if (!this.agencies.isEmpty()) {
-                startingMessage = startingMessage + "\nWho- " + String.join(", ", this.agencies.stream().map(Agency::getShorthand).toList());
+                startingMessage = startingMessage + "\nWho- " + String.join(", ", this.agencies.stream().map(AgencyImpl::getShorthand).toList());
             }
             startingMessage = startingMessage + "\nWhen- <t:" + getUnix() + ":t>";
 
@@ -275,7 +272,7 @@ public class Incident {
                 this.getTime().format(DateTimeFormatter.ofPattern(INCIDENT_DATE_FORMAT)),
                 this.getTime().format(DateTimeFormatter.ofPattern(INCIDENT_TIME_FORMAT)),
                 getUnix(),
-                String.join(", ", this.agencies.stream().map(Agency::getFormatted).toList()),
+                String.join(", ", this.agencies.stream().map(AgencyImpl::getFormatted).toList()),
                 this.location.getType().getTitle(),
                 this.location.format(),
                 !narrative.isEmpty() ? String.join("\n", narrative) : "None"
@@ -287,7 +284,7 @@ public class Incident {
 
         StringJoiner respondingAgenciesJoiner = new StringJoiner("\n");
         int index = 0;
-        for (Agency agency : this.agencies) {
+        for (AgencyImpl agency : this.agencies) {
             respondingAgenciesJoiner.add("- **" + agency.getLonghand().toUpperCase() + "**");
             respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
                     "(shorthand `" + agency.getShorthand() + "`, formatted `" + agency.getFormatted() + "`, emoji " + agency.getEmoji() + ")"

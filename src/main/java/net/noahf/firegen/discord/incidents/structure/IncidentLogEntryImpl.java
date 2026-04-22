@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
-public class IncidentNarrativeEntry {
+public class IncidentLogEntryImpl {
 
     private static final String NARRATIVE_TIME_FORMAT = "HH:mm";
 
@@ -19,7 +19,7 @@ public class IncidentNarrativeEntry {
 
     private @Getter @Setter EntryType type;
 
-    IncidentNarrativeEntry(LocalDateTime time, long userId, String entry, EntryType type) {
+    IncidentLogEntryImpl(LocalDateTime time, long userId, String entry, EntryType type) {
         this.id = new Random(System.currentTimeMillis()).nextLong(1000000, 9999999);
         this.time = time;
         this.userId = userId;

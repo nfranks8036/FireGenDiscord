@@ -4,7 +4,7 @@ import lombok.Getter;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.errors.ActionCommandNotExist;
-import net.noahf.firegen.discord.incidents.structure.Incident;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.utilities.Log;
 import org.reflections.Reflections;
 
@@ -73,7 +73,7 @@ public class ActionsManager {
         String actionTitle = sections[2];
         String[] params = Arrays.copyOfRange(sections, 3, sections.length);
 
-        Incident incident = Main.incidents.getIncidentBy(Long.parseLong(incidentNumber));
+        IncidentImpl incident = Main.incidents.getIncidentBy(Long.parseLong(incidentNumber));
         if (incident == null) {
             throw new IllegalArgumentException("Incident with ID '" + incidentNumber + "' does not exist.");
         }

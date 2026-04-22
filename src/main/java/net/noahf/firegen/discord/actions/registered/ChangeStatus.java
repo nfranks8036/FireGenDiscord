@@ -3,8 +3,8 @@ package net.noahf.firegen.discord.actions.registered;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
-import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentStatus;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
@@ -29,17 +29,17 @@ public class ChangeStatus implements ButtonAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
-        Incident incident = ctx.getIncident();
+        IncidentImpl incident = ctx.getIncident();
 
         incident.setStatus(incident.getStatus().opposite(incident));
         IncidentStatus newStatus = incident.getStatus();
 
         switch (newStatus) {
             case PENDING, ACTIVE -> {
-                incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.UPDATE, "Incident re-opened");
+                incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.UPDATE, "Incident re-opened");
             }
             case CLOSED, TIMED_OUT -> {
-                incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.UPDATE, "Incident closed");
+                incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.UPDATE, "Incident closed");
             }
         }
 

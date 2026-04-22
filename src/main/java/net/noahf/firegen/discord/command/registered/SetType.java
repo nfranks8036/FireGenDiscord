@@ -11,15 +11,16 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.registered.EditType;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.util.List;
 
 /**
- * Represents the command used to change the {@link net.noahf.firegen.discord.incidents.structure.IncidentType} of an
- * {@link Incident}.
+ * Represents the command used to change the {@link IncidentTypeImpl} of an
+ * {@link IncidentImpl}.
  * {@code /set-type <new-type> <reason>}
  */
 public class SetType extends Command {
@@ -36,7 +37,7 @@ public class SetType extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
-        Incident incident = EditType.editIncidents.get(event.getUser());
+        IncidentImpl incident = EditType.editIncidents.get(event.getUser());
 
         if (incident == null) {
             DiscordMessages.error(event, "You are not currently editing an incident. " +
@@ -69,7 +70,7 @@ public class SetType extends Command {
         incident.addContributor(event.getUser().getName()); // they have contributed
 
         if (!hiddenFromNarrative) { // if not hidden
-            incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.UPDATE,
+            incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.UPDATE,
                     "Changed incident type from '" + oldType + "' to '" + type + "' due to " + reason
             );
         }

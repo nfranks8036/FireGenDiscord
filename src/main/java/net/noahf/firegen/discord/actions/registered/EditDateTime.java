@@ -11,8 +11,8 @@ import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
-import net.noahf.firegen.discord.incidents.structure.Incident;
-import net.noahf.firegen.discord.incidents.structure.IncidentNarrativeEntry;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Time;
 
@@ -51,7 +51,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
-        Incident incident = ctx.getIncident();
+        IncidentImpl incident = ctx.getIncident();
 
         // the reason the following date/time fields can't be static is because they require the current incident's
         // date/time to pre-fill the value.
@@ -89,7 +89,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
-        Incident incident = ctx.getIncident();
+        IncidentImpl incident = ctx.getIncident();
 
         ModalMapping timeMapping = event.getValue("time");
         ModalMapping dateMapping = event.getValue("date");
@@ -120,7 +120,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
         DiscordMessages.selfDestruct(event, 5, narrative);
 
         incident.addContributor(event.getUser().getName());
-        incident.addNarrative(event.getUser(), IncidentNarrativeEntry.EntryType.UPDATE, narrative);
+        incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.UPDATE, narrative);
         incident.postUpdate();
     }
 

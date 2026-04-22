@@ -3,16 +3,17 @@ package net.noahf.firegen.discord.incidents.structure;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.Getter;
+import net.noahf.firegen.api.incidents.IncidentTypeTag;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncidentTypeTag {
+public class IncidentTypeTagImpl implements IncidentTypeTag {
 
-    public static final IncidentTypeTag DEFAULT;
+    public static final IncidentTypeTagImpl DEFAULT;
 
     static {
-        DEFAULT = new IncidentTypeTag(null);
+        DEFAULT = new IncidentTypeTagImpl(null);
         DEFAULT.name = "None";
         DEFAULT.priorities = new ArrayList<>(List.of("1", "2", "3"));
         DEFAULT.qualifier = null;
@@ -25,7 +26,7 @@ public class IncidentTypeTag {
 
     private @Getter Qualifier qualifier;
 
-    public IncidentTypeTag(JsonObject object) {
+    public IncidentTypeTagImpl(JsonObject object) {
         this.object = object;
         if (object == null) {
             return;

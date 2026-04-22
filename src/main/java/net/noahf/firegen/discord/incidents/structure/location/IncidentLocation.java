@@ -6,13 +6,14 @@ import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
 
 /**
- * Represents a location of an {@link net.noahf.firegen.discord.incidents.structure.Incident Incident}.
+ * Represents a location of an {@link IncidentImpl Incident}.
  */
 @AllArgsConstructor
 public class IncidentLocation {
